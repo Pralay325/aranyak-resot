@@ -19,6 +19,7 @@
       --occupied: #ef4444;
       --dirty: #f59e0b;
       --cottage-border: #0284c7;
+      --audit-theme: #4338ca;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
@@ -28,9 +29,11 @@
     .resort-title p { font-size: 0.85rem; color: #d8f3dc; margin-top: 2px; }
     
     .nav-tabs { display: flex; background-color: white; border-bottom: 2px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-    .tab-btn { padding: 1.1rem 1.6rem; border: none; background: none; font-weight: 600; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
+    .tab-btn { padding: 1.1rem 1.5rem; border: none; background: none; font-weight: 600; font-size: 0.92rem; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
     .tab-btn:hover { color: var(--primary-light); }
+    .tab-btn.audit-tab-btn { color: var(--audit-theme); }
+    .tab-btn.audit-tab-btn.active { border-bottom-color: var(--audit-theme); }
 
     .container { padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
     .tab-content { display: none; }
@@ -88,6 +91,8 @@
     .btn-primary { background-color: var(--primary); color: white; }
     .btn-primary:hover { background-color: var(--primary-light); }
     .btn-secondary { background-color: var(--secondary); color: white; }
+    .btn-audit { background-color: var(--audit-theme); color: white; }
+    .btn-audit:hover { background-color: #3730a3; }
     .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-dark); }
     .btn-block { width: 100%; }
     
@@ -97,13 +102,18 @@
     .gateway-panel { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; margin-top: 1rem; display: none; }
     .gateway-panel.active { display: block; }
 
+    /* Night Audit Panels */
+    .audit-stat-card { background: white; border: 1px solid #c7d2fe; border-left: 5px solid var(--audit-theme); padding: 1.25rem; border-radius: 6px; }
+    .audit-stat-card h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
+    .audit-stat-card .val { font-size: 1.6rem; font-weight: bold; color: var(--text-dark); }
+
     table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
     th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     th { background-color: #f1f5f9; font-weight: 600; }
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal.active { display: flex; }
-    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 680px; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
     .invoice { border: 1px solid #000; padding: 1.5rem; font-family: monospace; }
     .invoice-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 1rem; margin-bottom: 1rem; }
     .qr-container { display: flex; flex-direction: column; align-items: center; margin: 1rem 0; padding: 1rem; border: 1px dashed var(--border); border-radius: 6px; }
@@ -124,6 +134,7 @@
     <button class="tab-btn" onclick="switchTab('barMenu')">Bar Counter & Lounge</button>
     <button class="tab-btn" onclick="switchTab('dashboard')">Room & Cottage Inventory</button>
     <button class="tab-btn" onclick="switchTab('operations')">Front Desk & Billing</button>
+    <button class="tab-btn audit-tab-btn" onclick="switchTab('nightAudit')">Night Audit & EOD</button>
     <button class="tab-btn" onclick="switchTab('reports')">Folio Ledger & Reports</button>
   </nav>
 
@@ -543,6 +554,72 @@
       </div>
     </section>
 
+    <!-- Night Audit & EOD Operations -->
+    <section id="nightAudit" class="tab-content">
+      <div class="card" style="border-top: 4px solid var(--audit-theme);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h2 style="color:var(--audit-theme);">Night Audit & End-of-Day (EOD) Operations</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Automated business day reconciliation, daily room revenue posting, and financial ledger audit.</p>
+          </div>
+          <button class="btn btn-audit" onclick="runNightAudit()">Run End-of-Day Audit Now</button>
+        </div>
+
+        <div class="grid-4" style="margin-top: 1.5rem;">
+          <div class="audit-stat-card">
+            <h4>Audit Date</h4>
+            <div class="val" id="auditMetricDate" style="font-size:1.3rem;">--</div>
+          </div>
+          <div class="audit-stat-card">
+            <h4>Occupancy Rate</h4>
+            <div class="val" id="auditMetricOccupancy">0%</div>
+          </div>
+          <div class="audit-stat-card">
+            <h4>Occupied / In-House</h4>
+            <div class="val" id="auditMetricInHouse">0 Units</div>
+          </div>
+          <div class="audit-stat-card">
+            <h4>Total Daily Revenue</h4>
+            <div class="val" id="auditMetricRevenue">₹0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Daily Revenue Breakdown (Flash Report)</h3>
+          <table>
+            <tbody>
+              <tr><td>Room & Cottage Charges (In-House + Settled)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditRoomRev">0.00</span></td></tr>
+              <tr><td>Govinda Dining Hall (Food & Beverage)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditFoodRev">0.00</span></td></tr>
+              <tr><td>Madhushala Bar & Spirits Lounge</td><td style="text-align:right; font-weight:bold;">₹<span id="auditBarRev">0.00</span></td></tr>
+              <tr><td>Total Subtotal (Taxable Goods & Services)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditSubtotal">0.00</span></td></tr>
+              <tr><td>Central GST (CGST @ 6%)</td><td style="text-align:right; color:#4f46e5;">₹<span id="auditCgst">0.00</span></td></tr>
+              <tr><td>State GST (SGST @ 6%)</td><td style="text-align:right; color:#4f46e5;">₹<span id="auditSgst">0.00</span></td></tr>
+              <tr style="background:#eef2ff;"><td><strong>Gross Resort Revenue with GST</strong></td><td style="text-align:right; font-weight:bold; color:var(--audit-theme);">₹<span id="auditGross">0.00</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>Payment Gateway Settlement Audit</h3>
+          <table>
+            <tbody>
+              <tr><td>Unified Payments Interface (UPI QR)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditUpiSettled">0.00</span></td></tr>
+              <tr><td>Card POS Terminals (Debit / Credit)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditCardSettled">0.00</span></td></tr>
+              <tr><td>Digital Wallets (PhonePe / Paytm / GPay)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditWalletSettled">0.00</span></td></tr>
+              <tr><td>Front Desk Cash Register</td><td style="text-align:right; font-weight:bold;">₹<span id="auditCashSettled">0.00</span></td></tr>
+              <tr style="background:#f1f5f9;"><td><strong>Total Realized Collections</strong></td><td style="text-align:right; font-weight:bold; color:var(--primary);">₹<span id="auditTotalSettled">0.00</span></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:1.5rem; display:flex; gap:0.5rem;">
+            <button class="btn btn-outline btn-block" onclick="printAuditReport()">Print Executive Audit Report</button>
+            <button class="btn btn-secondary btn-block" onclick="exportAuditJSON()">Download Audit Record</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Folio Ledger & Reports -->
     <section id="reports" class="tab-content">
       <div class="card">
@@ -646,16 +723,19 @@
     let rooms = [];
     let ledger = [];
     let currentSettlement = null;
+    let lastAuditReport = null;
 
     function generateRefId() {
       return 'REF-' + Math.floor(100000 + Math.random() * 900000);
     }
 
     function initInventory() {
-      const savedRooms = localStorage.getItem('krishna_rooms_v4');
-      const savedLedger = localStorage.getItem('krishna_ledger_v4');
+      const savedRooms = localStorage.getItem('krishna_rooms_v5');
+      const savedLedger = localStorage.getItem('krishna_ledger_v5');
+      const savedAudit = localStorage.getItem('krishna_audit_v5');
 
       if (savedLedger) ledger = JSON.parse(savedLedger);
+      if (savedAudit) lastAuditReport = JSON.parse(savedAudit);
 
       if (savedRooms) {
         rooms = JSON.parse(savedRooms);
@@ -680,8 +760,9 @@
       if (document.getElementById('ciCheckOutDate')) document.getElementById('ciCheckOutDate').value = todayStr;
     }
 
-    function saveRooms() { localStorage.setItem('krishna_rooms_v4', JSON.stringify(rooms)); }
-    function saveLedger() { localStorage.setItem('krishna_ledger_v4', JSON.stringify(ledger)); }
+    function saveRooms() { localStorage.setItem('krishna_rooms_v5', JSON.stringify(rooms)); }
+    function saveLedger() { localStorage.setItem('krishna_ledger_v5', JSON.stringify(ledger)); }
+    function saveAudit() { localStorage.setItem('krishna_audit_v5', JSON.stringify(lastAuditReport)); }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -695,6 +776,7 @@
           document.getElementById('ciRefId').value = generateRefId();
         }
       }
+      if (tabId === 'nightAudit') renderNightAuditDashboard();
       if (tabId === 'reports') renderLedger();
     }
 
@@ -826,7 +908,6 @@
       const g = room.guest;
       if (!g.orderedItems) g.orderedItems = [];
 
-      // Check-out defaults to today's date and current local time
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
       const hours = String(now.getHours()).padStart(2, '0');
@@ -836,7 +917,6 @@
       document.getElementById('coActualDate').value = todayStr;
       document.getElementById('coActualTime').value = timeStr;
 
-      // Set order item default date-time to now
       document.getElementById('orderItemDate').value = todayStr;
       document.getElementById('orderItemTime').value = timeStr;
 
@@ -952,7 +1032,6 @@
       const subtotal = currentSettlement.roomCharges + itemsTotal;
       currentSettlement.subtotal = subtotal;
 
-      // 12% Total GST: 6% CGST + 6% SGST
       const cgst = subtotal * 0.06;
       const sgst = subtotal * 0.06;
       currentSettlement.cgst = cgst;
@@ -1013,10 +1092,10 @@
       let paymentDetails = method;
       if (method === 'Card Gateway') {
         const last4 = document.getElementById('cardNumber').value.slice(-4) || '8892';
-        paymentDetails = `Card (Authorized - Ending ${last4})`;
+        paymentDetails = `Card (Ending ${last4})`;
       } else if (method === 'Digital Wallet') {
         const provider = document.getElementById('walletProvider').value;
-        paymentDetails = `${provider} (Instant Debited)`;
+        paymentDetails = `${provider}`;
       } else if (method === 'Cash') {
         paymentDetails = 'Cash Counter';
       }
@@ -1034,6 +1113,8 @@
         phone: currentSettlement.guest.phone,
         checkIn: `${currentSettlement.guest.checkInDate} (${currentSettlement.guest.checkInTime || '12:00 PM'})`,
         checkOut: `${coDateStr} (${coTimeStr})`,
+        settleDate: coDateStr,
+        roomCharges: currentSettlement.roomCharges,
         subtotal: currentSettlement.subtotal,
         gstTotal: currentSettlement.cgst + currentSettlement.sgst,
         cgst: currentSettlement.cgst,
@@ -1091,6 +1172,143 @@
     }
 
     function closeModal() { document.getElementById('invoiceModal').classList.remove('active'); }
+
+    /* =========================================
+       NIGHT AUDIT & END-OF-DAY (EOD) ENGINE
+       ========================================= */
+    function runNightAudit() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const totalUnits = rooms.length;
+      
+      // 1. In-house occupied rooms evaluation
+      const occupiedRooms = rooms.filter(r => r.status === 'occupied');
+      const inHouseCount = occupiedRooms.length;
+      const occupancyRate = ((inHouseCount / totalUnits) * 100).toFixed(1);
+
+      // 2. In-house expected room revenue for the day
+      let inHouseRoomRev = 0;
+      let inHouseFoodRev = 0;
+      let inHouseBarRev = 0;
+
+      occupiedRooms.forEach(r => {
+        inHouseRoomRev += r.guest.dailyRate;
+        if (r.guest.orderedItems && r.guest.orderedItems.length > 0) {
+          r.guest.orderedItems.forEach(it => {
+            if (it.name.includes('Whisky') || it.name.includes('Beer') || it.name.includes('Scotch') || it.name.includes('Rum') || it.name.includes('Vodka')) {
+              inHouseBarRev += (it.price * it.qty);
+            } else {
+              inHouseFoodRev += (it.price * it.qty);
+            }
+          });
+        }
+      });
+
+      // 3. Settled folio records for today
+      let settledRoomRev = 0;
+      let settledFoodRev = 0;
+      let settledBarRev = 0;
+      let upiTotal = 0;
+      let cardTotal = 0;
+      let walletTotal = 0;
+      let cashTotal = 0;
+
+      const todaySettlements = ledger.filter(entry => entry.settleDate === todayStr || entry.checkOut.includes(todayStr));
+
+      todaySettlements.forEach(s => {
+        settledRoomRev += (s.roomCharges || 0);
+        if (s.items && s.items.length > 0) {
+          s.items.forEach(it => {
+            if (it.name.includes('Whisky') || it.name.includes('Beer') || it.name.includes('Scotch') || it.name.includes('Rum') || it.name.includes('Vodka')) {
+              settledBarRev += (it.price * it.qty);
+            } else {
+              settledFoodRev += (it.price * it.qty);
+            }
+          });
+        }
+
+        // Method collection breakdown
+        const m = s.method.toLowerCase();
+        if (m.includes('upi')) upiTotal += s.netPaid;
+        else if (m.includes('card')) cardTotal += s.netPaid;
+        else if (m.includes('wallet') || m.includes('phonepe') || m.includes('paytm')) walletTotal += s.netPaid;
+        else cashTotal += s.netPaid;
+      });
+
+      const totalRoomRev = inHouseRoomRev + settledRoomRev;
+      const totalFoodRev = inHouseFoodRev + settledFoodRev;
+      const totalBarRev = inHouseBarRev + settledBarRev;
+      const totalSubtotal = totalRoomRev + totalFoodRev + totalBarRev;
+
+      const cgst = totalSubtotal * 0.06;
+      const sgst = totalSubtotal * 0.06;
+      const grossRev = totalSubtotal + cgst + sgst;
+      const totalSettledToday = upiTotal + cardTotal + walletTotal + cashTotal;
+
+      lastAuditReport = {
+        date: todayStr,
+        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        totalUnits: totalUnits,
+        inHouseCount: inHouseCount,
+        occupancyRate: occupancyRate,
+        totalRoomRev: totalRoomRev,
+        totalFoodRev: totalFoodRev,
+        totalBarRev: totalBarRev,
+        totalSubtotal: totalSubtotal,
+        cgst: cgst,
+        sgst: sgst,
+        grossRev: grossRev,
+        upiTotal: upiTotal,
+        cardTotal: cardTotal,
+        walletTotal: walletTotal,
+        cashTotal: cashTotal,
+        totalSettledToday: totalSettledToday
+      };
+
+      saveAudit();
+      renderNightAuditDashboard();
+      alert(`Night Audit for ${todayStr} completed successfully!\nAll revenue ledgers & room counts reconciled.`);
+    }
+
+    function renderNightAuditDashboard() {
+      if (!lastAuditReport) {
+        document.getElementById('auditMetricDate').innerText = new Date().toISOString().split('T')[0];
+        return;
+      }
+      const r = lastAuditReport;
+      document.getElementById('auditMetricDate').innerText = r.date;
+      document.getElementById('auditMetricOccupancy').innerText = `${r.occupancyRate}%`;
+      document.getElementById('auditMetricInHouse').innerText = `${r.inHouseCount} / ${r.totalUnits}`;
+      document.getElementById('auditMetricRevenue').innerText = `₹${r.grossRev.toFixed(2)}`;
+
+      document.getElementById('auditRoomRev').innerText = r.totalRoomRev.toFixed(2);
+      document.getElementById('auditFoodRev').innerText = r.totalFoodRev.toFixed(2);
+      document.getElementById('auditBarRev').innerText = r.totalBarRev.toFixed(2);
+      document.getElementById('auditSubtotal').innerText = r.totalSubtotal.toFixed(2);
+      document.getElementById('auditCgst').innerText = r.cgst.toFixed(2);
+      document.getElementById('auditSgst').innerText = r.sgst.toFixed(2);
+      document.getElementById('auditGross').innerText = r.grossRev.toFixed(2);
+
+      document.getElementById('auditUpiSettled').innerText = r.upiTotal.toFixed(2);
+      document.getElementById('auditCardSettled').innerText = r.cardTotal.toFixed(2);
+      document.getElementById('auditWalletSettled').innerText = r.walletTotal.toFixed(2);
+      document.getElementById('auditCashSettled').innerText = r.cashTotal.toFixed(2);
+      document.getElementById('auditTotalSettled').innerText = r.totalSettledToday.toFixed(2);
+    }
+
+    function printAuditReport() {
+      if (!lastAuditReport) { alert('Please run Night Audit before printing.'); return; }
+      window.print();
+    }
+
+    function exportAuditJSON() {
+      if (!lastAuditReport) { alert('Please run Night Audit before downloading.'); return; }
+      const blob = new Blob([JSON.stringify(lastAuditReport, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `Shree_Krishna_Resort_Night_Audit_${lastAuditReport.date}.json`);
+      a.click();
+    }
 
     function renderLedger() {
       const tbody = document.getElementById('ledgerTableBody');
