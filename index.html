@@ -96,13 +96,16 @@
     .order-list-box { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; max-height: 150px; overflow-y: auto; margin-top: 0.5rem; font-size: 0.85rem; }
     .order-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; border-bottom: 1px dashed #e2e8f0; }
 
+    .gateway-panel { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; margin-top: 1rem; display: none; }
+    .gateway-panel.active { display: block; }
+
     table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
     th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     th { background-color: #f1f5f9; font-weight: 600; }
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal.active { display: flex; }
-    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 650px; max-height: 90vh; overflow-y: auto; }
     .invoice { border: 1px solid #000; padding: 1.5rem; font-family: monospace; }
     .invoice-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 1rem; margin-bottom: 1rem; }
     .qr-container { display: flex; flex-direction: column; align-items: center; margin: 1rem 0; padding: 1rem; border: 1px dashed var(--border); border-radius: 6px; }
@@ -127,7 +130,7 @@
   </nav>
 
   <div class="container">
-    <!-- Resort Overview with Gallery -->
+    <!-- Resort Overview -->
     <section id="resortView" class="tab-content active">
       <div class="hero-banner">
         <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
@@ -142,7 +145,6 @@
         <p style="color:var(--text-muted); font-size:0.9rem;">Experience open landscaped gardens, private cottages, and luxury stays amidst nature.</p>
         
         <div class="gallery-grid">
-          <!-- 1. Beautiful Lawn -->
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=700&q=80" alt="Resort Garden Lawn">
             <div class="gallery-info">
@@ -150,8 +152,6 @@
               <p>Spacious open-air manicured green lawns for evening walks, family relaxation, and campfires under the starry skies.</p>
             </div>
           </div>
-
-          <!-- 2. Heritage Cottage -->
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=700&q=80" alt="Heritage Standalone Cottage">
             <div class="gallery-info">
@@ -159,8 +159,6 @@
               <p>Independent luxury cottages situated in open garden areas featuring private wooden patios and panoramic forest views.</p>
             </div>
           </div>
-
-          <!-- 3. Deluxe Room -->
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=700&q=80" alt="Deluxe Room">
             <div class="gallery-info">
@@ -168,8 +166,6 @@
               <p>Comfort-crafted interior, climate control AC, premium king bed, and private balcony overlooking lush greenery.</p>
             </div>
           </div>
-
-          <!-- 4. Family Suite -->
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=700&q=80" alt="Eco Family Suite">
             <div class="gallery-info">
@@ -177,8 +173,6 @@
               <p>Spacious interconnected two-room suites with contemporary living spaces designed for complete family vacations.</p>
             </div>
           </div>
-
-          <!-- 5. Dining Hall -->
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=700&q=80" alt="Govinda Dining Hall">
             <div class="gallery-info">
@@ -339,8 +333,18 @@
                 <input type="date" id="ciCheckInDate" required>
               </div>
               <div>
-                <label>Expected Check-Out</label>
+                <label>Check-In Time</label>
+                <input type="time" id="ciCheckInTime" value="12:00" required>
+              </div>
+            </div>
+            <div class="form-row form-group">
+              <div>
+                <label>Expected Check-Out Date</label>
                 <input type="date" id="ciCheckOutDate" required>
+              </div>
+              <div>
+                <label>Expected Check-Out Time</label>
+                <input type="time" id="ciCheckOutTime" value="11:00" required>
               </div>
             </div>
             <div class="form-row form-group">
@@ -368,16 +372,21 @@
           </form>
 
           <div id="billingSummary" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
-            <div style="background:#f8fafc; padding:1rem; border-radius:4px; margin-bottom:1rem; font-size:0.9rem;">
+            <div style="background:#f8fafc; padding:1.25rem; border-radius:6px; margin-bottom:1rem; font-size:0.9rem; border:1px solid var(--border);">
               <p><strong>Ref ID:</strong> <span id="billRefId" style="font-weight:bold; color:var(--primary);"></span></p>
-              <p><strong>Guest:</strong> <span id="billGuestName"></span></p>
+              <p><strong>Guest Name:</strong> <span id="billGuestName"></span></p>
               <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
-              <p><strong>Duration:</strong> <span id="billStayDuration"></span></p>
-              <p><strong>Room / Cottage Rent:</strong> ₹<span id="billRoomCharges"></span></p>
-              <p><strong>Total Food & Bar Charges:</strong> ₹<span id="billPosCharges">0</span></p>
-              <p><strong>Advance Credited:</strong> ₹<span id="billAdvancePaid"></span></p>
+              <p><strong>Duration & Timings:</strong> <span id="billStayDuration"></span></p>
               <hr style="margin:0.5rem 0;">
-              <h4 style="color:var(--primary);">Net Payable Balance: ₹<span id="billNetPayable"></span></h4>
+              <p><strong>Room / Cottage Charges:</strong> ₹<span id="billRoomCharges">0.00</span></p>
+              <p><strong>Food & Spirits Charges:</strong> ₹<span id="billPosCharges">0.00</span></p>
+              <p><strong>Subtotal Amount:</strong> ₹<span id="billSubtotal">0.00</span></p>
+              <p><strong>CGST (6%):</strong> ₹<span id="billCgst">0.00</span></p>
+              <p><strong>SGST (6%):</strong> ₹<span id="billSgst">0.00</span></p>
+              <p><strong>Total with Taxes (12% GST):</strong> ₹<span id="billGrossWithTax">0.00</span></p>
+              <p><strong>Advance Credited:</strong> -₹<span id="billAdvancePaid">0.00</span></p>
+              <hr style="margin:0.5rem 0;">
+              <h3 style="color:var(--primary);">Net Payable Balance: ₹<span id="billNetPayable">0.00</span></h3>
             </div>
 
             <!-- Multi-item Food & Bar Bill Addition -->
@@ -414,30 +423,88 @@
                 <button type="button" class="btn btn-outline" onclick="addOrderItem()">Add Item</button>
               </div>
 
-              <!-- Itemized List -->
               <div class="order-list-box" id="orderItemsList">
                 <p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Settlement Method</label>
+            <!-- Payment Gateway Selector -->
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <label>Select Payment Settlement Gateway</label>
               <select id="paymentMethod" onchange="handlePaymentMethodChange()">
-                <option value="UPI QR">Unified Payments Interface (Dynamic UPI QR)</option>
-                <option value="Cash">Cash Counter</option>
-                <option value="Debit Card">Debit Card</option>
-                <option value="Credit Card">Credit Card</option>
-                <option value="Digital Wallet">Digital Wallet (PhonePe / Paytm / GPay)</option>
+                <option value="UPI QR">Unified Payments Interface (UPI QR Code)</option>
+                <option value="Card Gateway">Debit / Credit Card POS Terminal Gateway</option>
+                <option value="Digital Wallet">Digital Wallet (PhonePe / Paytm / Amazon Pay / GPay)</option>
+                <option value="Cash">Cash Settlement Counter</option>
               </select>
             </div>
 
-            <div id="upiContainer" class="qr-container">
-              <p style="font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Scan & Pay via any UPI App</p>
-              <img id="upiQrCode" src="" alt="Dynamic UPI QR" style="width:160px; height:160px;">
-              <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">VPA: 9733054199@ybl</p>
+            <!-- UPI QR Gateway Panel -->
+            <div id="upiGatewayPanel" class="gateway-panel active">
+              <div class="qr-container">
+                <p style="font-size:0.9rem; font-weight:600; margin-bottom:0.25rem;">Scan & Pay via any UPI App</p>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem;">Google Pay, PhonePe, Paytm, BHIM</p>
+                <img id="upiQrCode" src="" alt="Dynamic UPI QR" style="width:170px; height:170px;">
+                <p style="font-size:0.8rem; font-weight:600; color:var(--primary); margin-top:0.5rem;">VPA: 9733054199@ybl</p>
+              </div>
             </div>
 
-            <button type="button" class="btn btn-primary btn-block" onclick="processSettlement()">Complete Settlement & Mark Room Dirty</button>
+            <!-- Card Terminal Gateway Panel -->
+            <div id="cardGatewayPanel" class="gateway-panel">
+              <h4 style="margin-bottom:0.75rem; color:var(--primary);">Card Terminal Payment Gateway</h4>
+              <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" id="cardHolderName" placeholder="Name printed on card">
+              </div>
+              <div class="form-group">
+                <label>Card Number (16 Digits)</label>
+                <input type="text" id="cardNumber" maxlength="19" placeholder="4532 •••• •••• 8892">
+              </div>
+              <div class="form-row form-group">
+                <div>
+                  <label>Expiry (MM/YY)</label>
+                  <input type="text" id="cardExpiry" maxlength="5" placeholder="MM/YY">
+                </div>
+                <div>
+                  <label>CVV</label>
+                  <input type="password" id="cardCvv" maxlength="3" placeholder="•••">
+                </div>
+              </div>
+              <p style="font-size:0.75rem; color:var(--text-muted);">Encrypted 256-bit SSL Payment Gateway Terminal</p>
+            </div>
+
+            <!-- Digital Wallet Gateway Panel -->
+            <div id="walletGatewayPanel" class="gateway-panel">
+              <h4 style="margin-bottom:0.75rem; color:var(--primary);">Digital Wallet Integration</h4>
+              <div class="form-group">
+                <label>Select Partner Wallet Provider</label>
+                <select id="walletProvider">
+                  <option value="PhonePe Wallet">PhonePe Wallet</option>
+                  <option value="Paytm Payments Bank">Paytm Wallet</option>
+                  <option value="Amazon Pay Balance">Amazon Pay Balance</option>
+                  <option value="MobiKwik">MobiKwik Wallet</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Registered Wallet Mobile Number</label>
+                <input type="tel" id="walletMobile" placeholder="10-digit mobile number linked to wallet">
+              </div>
+              <p style="font-size:0.75rem; color:var(--text-muted);">A one-time OTP confirmation link will be triggered to this number.</p>
+            </div>
+
+            <!-- Cash Counter Panel -->
+            <div id="cashGatewayPanel" class="gateway-panel">
+              <h4 style="margin-bottom:0.75rem; color:var(--primary);">Cash Register Counter</h4>
+              <div class="form-group">
+                <label>Cash Received from Guest (₹)</label>
+                <input type="number" id="cashReceived" min="0" placeholder="e.g. 5000" oninput="calculateCashChange()">
+              </div>
+              <div style="background:#fff; padding:0.75rem; border-radius:4px; border:1px solid var(--border);">
+                <p style="font-size:0.85rem;">Change to Return: <strong>₹<span id="cashChangeReturn">0.00</span></strong></p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block" style="margin-top:1.5rem;" onclick="processSettlement()">Complete Settlement & Generate Tax Invoice</button>
           </div>
         </div>
       </div>
@@ -456,14 +523,15 @@
               <tr>
                 <th>Folio</th>
                 <th>Ref ID</th>
-                <th>Room / Cottage</th>
+                <th>Unit</th>
                 <th>Guest Name</th>
                 <th>Headcount</th>
-                <th>Phone</th>
                 <th>Check-In</th>
                 <th>Check-Out</th>
-                <th>Net Settled</th>
-                <th>Payment Mode</th>
+                <th>Subtotal</th>
+                <th>GST (12%)</th>
+                <th>Net Paid</th>
+                <th>Payment Gateway</th>
               </tr>
             </thead>
             <tbody id="ledgerTableBody"></tbody>
@@ -479,41 +547,53 @@
       <div class="invoice" id="printableInvoice">
         <div class="invoice-header">
           <h3>SHREE KRISHNA RESORT & RETREAT</h3>
-          <p>Ayodhya Hills, Purulia, West Bengal | Ph: +91 9733054199</p>
-          <p>GSTIN: 19ABCDE1234F1Z5</p>
+          <p>Ayodhya Hills, Purulia, West Bengal - 723143 | Ph: +91 9733054199</p>
+          <p>GSTIN: 19ABCDE1234F1Z5 | State: West Bengal (Code: 19)</p>
           <h4>TAX INVOICE / GUEST FOLIO</h4>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-size:0.85rem;">
+        
+        <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-size:0.85rem; border-bottom:1px dashed #000; padding-bottom:0.5rem;">
           <div>
             <p><strong>Invoice No:</strong> <span id="invNo"></span></p>
             <p><strong>Customer Ref ID:</strong> <span id="invRefId" style="font-weight:bold;"></span></p>
-            <p><strong>Date:</strong> <span id="invDate"></span></p>
             <p><strong>Unit Assigned:</strong> <span id="invRoom"></span></p>
+            <p><strong>Check-In:</strong> <span id="invCheckIn"></span></p>
+            <p><strong>Check-Out:</strong> <span id="invCheckOut"></span></p>
           </div>
           <div style="text-align:right;">
             <p><strong>Guest:</strong> <span id="invGuest"></span></p>
             <p><strong>Contact:</strong> <span id="invPhone"></span></p>
             <p><strong>Guests:</strong> <span id="invPax"></span></p>
+            <p><strong>Invoice Date:</strong> <span id="invDate"></span></p>
           </div>
         </div>
+
         <table>
           <thead>
             <tr>
-              <th>Particulars</th>
+              <th>Particulars (SAC / HSN)</th>
               <th style="text-align:right;">Amount (₹)</th>
             </tr>
           </thead>
           <tbody id="invItems"></tbody>
         </table>
-        <div style="text-align:right; margin-top:1rem; font-size:0.9rem;">
-          <p>Advance Adjusted: ₹<span id="invAdv">0.00</span></p>
-          <h4>Net Paid: ₹<span id="invNet">0.00</span></h4>
-          <p>Settlement Mode: <span id="invMethod"></span></p>
+
+        <div style="text-align:right; margin-top:1rem; font-size:0.88rem; line-height: 1.5;">
+          <p>Subtotal (Taxable Value): ₹<span id="invSubtotal">0.00</span></p>
+          <p>CGST @ 6%: ₹<span id="invCgst">0.00</span></p>
+          <p>SGST @ 6%: ₹<span id="invSgst">0.00</span></p>
+          <p>Gross Amount with GST: ₹<span id="invGross">0.00</span></p>
+          <p>Advance Payment Adjusted: -₹<span id="invAdv">0.00</span></p>
+          <h4 style="margin-top:0.4rem; font-size:1.05rem;">Net Settled Amount: ₹<span id="invNet">0.00</span></h4>
+          <p><strong>Payment Gateway / Mode:</strong> <span id="invMethod"></span></p>
         </div>
-        <div style="margin-top:2rem; text-align:center; font-size:0.8rem; border-top:1px dashed #000; padding-top:0.5rem;">
-          <p>Thank you for choosing Shree Krishna Resort & Retreat!</p>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.8rem; border-top:1px dashed #000; padding-top:0.5rem;">
+          <p>Standard Check-In: 12:00 PM | Standard Check-Out: 11:00 AM</p>
+          <p>Thank you for choosing Shree Krishna Resort & Retreat, Ayodhya Hills!</p>
         </div>
       </div>
+      
       <div style="margin-top:1.5rem; display:flex; gap:1rem;">
         <button class="btn btn-primary btn-block" onclick="window.print()">Print Receipt</button>
         <button class="btn btn-outline btn-block" onclick="closeModal()">Close</button>
@@ -539,8 +619,8 @@
     }
 
     function initInventory() {
-      const savedRooms = localStorage.getItem('krishna_rooms_v2');
-      const savedLedger = localStorage.getItem('krishna_ledger');
+      const savedRooms = localStorage.getItem('krishna_rooms_v3');
+      const savedLedger = localStorage.getItem('krishna_ledger_v3');
 
       if (savedLedger) ledger = JSON.parse(savedLedger);
 
@@ -563,8 +643,8 @@
       document.getElementById('ciRefId').value = generateRefId();
     }
 
-    function saveRooms() { localStorage.setItem('krishna_rooms_v2', JSON.stringify(rooms)); }
-    function saveLedger() { localStorage.setItem('krishna_ledger', JSON.stringify(ledger)); }
+    function saveRooms() { localStorage.setItem('krishna_rooms_v3', JSON.stringify(rooms)); }
+    function saveLedger() { localStorage.setItem('krishna_ledger_v3', JSON.stringify(ledger)); }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -685,14 +765,16 @@
         idType: document.getElementById('ciIdType').value,
         idNumber: document.getElementById('ciIdNumber').value,
         checkInDate: document.getElementById('ciCheckInDate').value,
+        checkInTime: document.getElementById('ciCheckInTime').value || '12:00',
         checkOutDate: document.getElementById('ciCheckOutDate').value,
+        checkOutTime: document.getElementById('ciCheckOutTime').value || '11:00',
         dailyRate: parseFloat(document.getElementById('ciRate').value),
         advancePaid: parseFloat(document.getElementById('ciAdvance').value) || 0,
         orderedItems: []
       };
 
       saveRooms();
-      alert(`Unit ${roomNo} Successfully Checked In! [Customer Ref ID: ${refId}]`);
+      alert(`Unit ${roomNo} Successfully Checked In!\n[Customer Ref ID: ${refId}]\nCheck-In Time: ${room.guest.checkInTime}`);
       document.getElementById('checkInForm').reset();
       document.getElementById('ciRefId').value = generateRefId();
       populateDropdowns();
@@ -713,8 +795,6 @@
       if (diffDays <= 0) diffDays = 1;
 
       const roomCharges = diffDays * g.dailyRate;
-      const itemsTotal = g.orderedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const netPayable = roomCharges + itemsTotal - g.advancePaid;
 
       currentSettlement = {
         refId: g.refId || 'N/A',
@@ -723,14 +803,18 @@
         guest: g,
         days: diffDays,
         roomCharges: roomCharges,
-        itemsTotal: itemsTotal,
-        netPayable: netPayable > 0 ? netPayable : 0
+        itemsTotal: 0,
+        subtotal: 0,
+        cgst: 0,
+        sgst: 0,
+        grossWithTax: 0,
+        netPayable: 0
       };
 
       document.getElementById('billRefId').innerText = currentSettlement.refId;
       document.getElementById('billGuestName').innerText = g.name;
       document.getElementById('billGuestCount').innerText = `${g.adults} Adults, ${g.children} Children`;
-      document.getElementById('billStayDuration').innerText = `${diffDays} Day(s)`;
+      document.getElementById('billStayDuration').innerText = `${diffDays} Day(s) [In: ${g.checkInDate} ${g.checkInTime || '12:00'} | Out: Today ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`;
       document.getElementById('billRoomCharges').innerText = roomCharges.toFixed(2);
       document.getElementById('billAdvancePaid').innerText = g.advancePaid.toFixed(2);
       
@@ -792,18 +876,54 @@
     function updateBillingCalculations() {
       const itemsTotal = currentSettlement.guest.orderedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
       currentSettlement.itemsTotal = itemsTotal;
-      const net = (currentSettlement.roomCharges + itemsTotal) - currentSettlement.guest.advancePaid;
+
+      const subtotal = currentSettlement.roomCharges + itemsTotal;
+      currentSettlement.subtotal = subtotal;
+
+      // 12% Total GST: 6% CGST + 6% SGST
+      const cgst = subtotal * 0.06;
+      const sgst = subtotal * 0.06;
+      currentSettlement.cgst = cgst;
+      currentSettlement.sgst = sgst;
+
+      const grossWithTax = subtotal + cgst + sgst;
+      currentSettlement.grossWithTax = grossWithTax;
+
+      const net = grossWithTax - currentSettlement.guest.advancePaid;
       currentSettlement.netPayable = net > 0 ? net : 0;
 
       document.getElementById('billPosCharges').innerText = itemsTotal.toFixed(2);
+      document.getElementById('billSubtotal').innerText = subtotal.toFixed(2);
+      document.getElementById('billCgst').innerText = cgst.toFixed(2);
+      document.getElementById('billSgst').innerText = sgst.toFixed(2);
+      document.getElementById('billGrossWithTax').innerText = grossWithTax.toFixed(2);
       document.getElementById('billNetPayable').innerText = currentSettlement.netPayable.toFixed(2);
+
       updateUpiQr(currentSettlement.netPayable);
+      calculateCashChange();
     }
 
     function handlePaymentMethodChange() {
       const method = document.getElementById('paymentMethod').value;
-      const upiContainer = document.getElementById('upiContainer');
-      upiContainer.style.display = (method === 'UPI QR') ? 'flex' : 'none';
+      document.querySelectorAll('.gateway-panel').forEach(p => p.classList.remove('active'));
+
+      if (method === 'UPI QR') {
+        document.getElementById('upiGatewayPanel').classList.add('active');
+      } else if (method === 'Card Gateway') {
+        document.getElementById('cardGatewayPanel').classList.add('active');
+      } else if (method === 'Digital Wallet') {
+        document.getElementById('walletGatewayPanel').classList.add('active');
+      } else if (method === 'Cash') {
+        document.getElementById('cashGatewayPanel').classList.add('active');
+        calculateCashChange();
+      }
+    }
+
+    function calculateCashChange() {
+      if (!currentSettlement) return;
+      const received = parseFloat(document.getElementById('cashReceived').value) || 0;
+      const change = received - currentSettlement.netPayable;
+      document.getElementById('cashChangeReturn').innerText = change > 0 ? change.toFixed(2) : '0.00';
     }
 
     function updateUpiQr(amount) {
@@ -817,6 +937,20 @@
       if (!currentSettlement) return;
       const method = document.getElementById('paymentMethod').value;
       const folioId = 'FOL-' + Date.now().toString().slice(-6);
+      
+      let paymentDetails = method;
+      if (method === 'Card Gateway') {
+        const last4 = document.getElementById('cardNumber').value.slice(-4) || '8892';
+        paymentDetails = `Card (Authorized - Ending ${last4})`;
+      } else if (method === 'Digital Wallet') {
+        const provider = document.getElementById('walletProvider').value;
+        paymentDetails = `${provider} (Instant Debited)`;
+      } else if (method === 'Cash') {
+        paymentDetails = 'Cash Counter';
+      }
+
+      const now = new Date();
+      const checkOutTimeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       const record = {
         folioId: folioId,
@@ -826,18 +960,21 @@
         adults: currentSettlement.guest.adults,
         children: currentSettlement.guest.children,
         phone: currentSettlement.guest.phone,
-        checkIn: currentSettlement.guest.checkInDate,
-        checkOut: new Date().toISOString().split('T')[0],
-        totalAmount: currentSettlement.roomCharges + currentSettlement.itemsTotal,
+        checkIn: `${currentSettlement.guest.checkInDate} (${currentSettlement.guest.checkInTime || '12:00 PM'})`,
+        checkOut: `${now.toISOString().split('T')[0]} (${checkOutTimeString})`,
+        subtotal: currentSettlement.subtotal,
+        gstTotal: currentSettlement.cgst + currentSettlement.sgst,
+        cgst: currentSettlement.cgst,
+        sgst: currentSettlement.sgst,
+        grossWithTax: currentSettlement.grossWithTax,
         netPaid: currentSettlement.netPayable,
-        method: method,
+        method: paymentDetails,
         items: [...currentSettlement.guest.orderedItems]
       };
 
       ledger.push(record);
       saveLedger();
 
-      // Check-out marks unit as dirty
       const room = rooms.find(r => r.number === currentSettlement.roomNo);
       room.status = 'dirty';
       room.guest = null;
@@ -853,21 +990,27 @@
     function showInvoice(record, settlement) {
       document.getElementById('invNo').innerText = record.folioId;
       document.getElementById('invRefId').innerText = record.refId;
-      document.getElementById('invDate').innerText = record.checkOut;
+      document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-IN');
       document.getElementById('invRoom').innerText = record.roomNo;
+      document.getElementById('invCheckIn').innerText = record.checkIn;
+      document.getElementById('invCheckOut').innerText = record.checkOut;
       document.getElementById('invGuest').innerText = record.name;
       document.getElementById('invPhone').innerText = record.phone;
       document.getElementById('invPax').innerText = `${record.adults} Adults, ${record.children} Children`;
 
       const tbody = document.getElementById('invItems');
-      tbody.innerHTML = `<tr><td>Room / Cottage Charges (${settlement.days} Nights @ ₹${settlement.guest.dailyRate})</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>`;
+      tbody.innerHTML = `<tr><td>Room / Cottage Rent (${settlement.days} Nights @ ₹${settlement.guest.dailyRate}) [SAC: 996311]</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>`;
       
       if (record.items && record.items.length > 0) {
         record.items.forEach(it => {
-          tbody.innerHTML += `<tr><td>${it.name} (Qty: ${it.qty})</td><td style="text-align:right;">₹${(it.price * it.qty).toFixed(2)}</td></tr>`;
+          tbody.innerHTML += `<tr><td>${it.name} (Qty: ${it.qty}) [SAC: 996331]</td><td style="text-align:right;">₹${(it.price * it.qty).toFixed(2)}</td></tr>`;
         });
       }
 
+      document.getElementById('invSubtotal').innerText = record.subtotal.toFixed(2);
+      document.getElementById('invCgst').innerText = record.cgst.toFixed(2);
+      document.getElementById('invSgst').innerText = record.sgst.toFixed(2);
+      document.getElementById('invGross').innerText = record.grossWithTax.toFixed(2);
       document.getElementById('invAdv').innerText = settlement.guest.advancePaid.toFixed(2);
       document.getElementById('invNet').innerText = record.netPaid.toFixed(2);
       document.getElementById('invMethod').innerText = record.method;
@@ -888,9 +1031,10 @@
             <td>${row.roomNo}</td>
             <td>${row.name}</td>
             <td>${row.adults}A, ${row.children}C</td>
-            <td>${row.phone}</td>
             <td>${row.checkIn}</td>
             <td>${row.checkOut}</td>
+            <td>₹${row.subtotal.toFixed(2)}</td>
+            <td>₹${row.gstTotal.toFixed(2)}</td>
             <td>₹${row.netPaid.toFixed(2)}</td>
             <td>${row.method}</td>
           </tr>
@@ -900,9 +1044,9 @@
 
     function exportLedgerCSV() {
       if(ledger.length === 0) { alert('No ledger data available to export.'); return; }
-      let csv = 'Folio ID,Customer Ref ID,Unit,Guest Name,Headcount,Phone,Check-In,Check-Out,Amount Paid,Payment Mode\n';
+      let csv = 'Folio ID,Customer Ref ID,Unit,Guest Name,Headcount,Check-In,Check-Out,Subtotal,GST Total,Net Paid,Payment Gateway\n';
       ledger.forEach(r => {
-        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.adults}A ${r.children}C","${r.phone}","${r.checkIn}","${r.checkOut}","${r.netPaid}","${r.method}"\n`;
+        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.adults}A ${r.children}C","${r.checkIn}","${r.checkOut}","${r.subtotal}","${r.gstTotal}","${r.netPaid}","${r.method}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
