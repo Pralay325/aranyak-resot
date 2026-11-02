@@ -3,1571 +3,334 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shree Krishna Resort & Retreat - Ayodhya Hills, Purulia</title>
+  <title>Srikrishna Resort & Retreat - Front Office & Billing</title>
   <style>
     :root {
       --primary: #1b4332;
       --primary-light: #2d6a4f;
-      --accent: #d4a373;
-      --secondary: #087f5b;
-      --bg: #f8fafc;
+      --accent: #d8f3dc;
+      --text: #212529;
+      --bg: #f8f9fa;
       --card-bg: #ffffff;
-      --text-dark: #1f2937;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --available: #22c55e;
-      --occupied: #ef4444;
-      --dirty: #f59e0b;
-      --cottage-border: #0284c7;
-      --audit-theme: #4338ca;
+      --border: #dee2e6;
+      --danger: #d90429;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
-    
-    header { background-color: var(--primary); color: white; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .resort-title h1 { font-size: 1.6rem; letter-spacing: 0.5px; }
-    .resort-title p { font-size: 0.85rem; color: #d8f3dc; margin-top: 2px; }
-    
-    .nav-tabs { display: flex; background-color: white; border-bottom: 2px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-    .tab-btn { padding: 1.1rem 1.5rem; border: none; background: none; font-weight: 600; font-size: 0.92rem; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .tab-btn:hover { color: var(--primary-light); }
-    .tab-btn.audit-tab-btn { color: var(--audit-theme); }
-    .tab-btn.audit-tab-btn.active { border-bottom-color: var(--audit-theme); }
-
-    .container { padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.75rem; margin-bottom: 1.5rem; }
-    
-    .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 350px; background: #000; }
-    .hero-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
-    .hero-text { position: absolute; bottom: 2rem; left: 2rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-    .hero-text h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .hero-text p { font-size: 1.1rem; color: #f1f5f9; }
-
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.25rem; }
-    .gallery-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.06); transition: transform 0.2s ease; }
-    .gallery-card:hover { transform: translateY(-3px); }
-    .gallery-card img { width: 100%; height: 210px; object-fit: cover; display: block; }
-    .gallery-info { padding: 1.1rem; }
-    .gallery-info h4 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.35rem; }
-    .gallery-info p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
-
-    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
-    .menu-category { border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; background: #fff; }
-    .menu-category h4 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; font-size: 1.1rem; }
-    .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed #f1f5f9; }
-    .menu-item:last-child { border-bottom: none; }
-    .item-name { font-weight: 500; font-size: 0.95rem; }
-    .item-desc { font-size: 0.75rem; color: var(--text-muted); }
-    .item-price { font-weight: 700; color: var(--primary-light); }
-
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-    
-    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    .room-card { padding: 1rem; border-radius: 6px; text-align: center; border: 1px solid var(--border); background-color: white; position: relative; }
-    .room-card.available { border-top: 5px solid var(--available); }
-    .room-card.occupied { border-top: 5px solid var(--occupied); }
-    .room-card.dirty { border-top: 5px solid var(--dirty); background-color: #fffbeb; }
-    .room-card.cottage-type { border-left: 3px solid var(--cottage-border); }
-    
-    .room-no { font-size: 1.15rem; font-weight: bold; margin-bottom: 0.25rem; }
-    .room-type { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
-    .room-status { font-size: 0.8rem; font-weight: 600; text-transform: capitalize; }
-    .status-available { color: var(--available); }
-    .status-occupied { color: var(--occupied); }
-    .status-dirty { color: var(--dirty); }
-
-    .clean-btn { margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; border: none; background: #d97706; color: white; border-radius: 3px; cursor: pointer; }
-    .clean-btn:hover { background: #b45309; }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
-    label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-dark); }
-    input, select { width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; border-radius: 4px; border: none; cursor: pointer; transition: background 0.2s; }
-    .btn-primary { background-color: var(--primary); color: white; }
-    .btn-primary:hover { background-color: var(--primary-light); }
-    .btn-secondary { background-color: var(--secondary); color: white; }
-    .btn-audit { background-color: var(--audit-theme); color: white; }
-    .btn-audit:hover { background-color: #3730a3; }
-    .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-dark); }
-    .btn-block { width: 100%; }
-    
-    .order-list-box { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; max-height: 180px; overflow-y: auto; margin-top: 0.5rem; font-size: 0.85rem; }
-    .order-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; border-bottom: 1px dashed #e2e8f0; }
-
-    .gateway-panel { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; margin-top: 1rem; display: none; }
-    .gateway-panel.active { display: block; }
-
-    /* Form C & Split Folio Styles */
-    .form-c-box { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 1rem; margin-top: 0.75rem; display: none; }
-    .split-folio-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 1rem; margin-top: 1rem; display: none; }
-
-    .audit-stat-card { background: white; border: 1px solid #c7d2fe; border-left: 5px solid var(--audit-theme); padding: 1.25rem; border-radius: 6px; }
-    .audit-stat-card h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
-    .audit-stat-card .val { font-size: 1.6rem; font-weight: bold; color: var(--text-dark); }
-
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-    th { background-color: #f1f5f9; font-weight: 600; }
-
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-    .modal.active { display: flex; }
-    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
-    .invoice { border: 1px solid #000; padding: 1.5rem; font-family: monospace; }
-    .invoice-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 1rem; margin-bottom: 1rem; }
-    .qr-container { display: flex; flex-direction: column; align-items: center; margin: 1rem 0; padding: 1rem; border: 1px dashed var(--border); border-radius: 6px; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    header { background: var(--primary); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+    header h1 { font-size: 24px; margin-bottom: 5px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .card h2 { font-size: 18px; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; }
+    button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%; font-weight: bold; }
+    button:hover { background: var(--primary-light); }
+    .guest-item { border: 1px solid var(--border); padding: 12px; border-radius: 6px; margin-bottom: 10px; background: #fff; border-left: 5px solid var(--primary); }
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-small { padding: 6px 10px; font-size: 12px; width: auto; }
+    .btn-danger { background: var(--danger); }
+    .food-history { margin-top: 10px; background: var(--bg); padding: 8px; border-radius: 4px; font-size: 13px; }
+    .food-history table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+    .food-history th, .food-history td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
+    /* Printable Invoice */
+    #invoice { display: none; background: white; padding: 30px; border: 1px solid #000; margin-top: 20px; }
+    @media print {
+      body * { visibility: hidden; }
+      #invoice, #invoice * { visibility: visible; }
+      #invoice { display: block; position: absolute; left: 0; top: 0; width: 100%; border: none; }
+    }
   </style>
 </head>
 <body>
+
+<div class="container">
   <header>
-    <div class="resort-title">
-      <h1>Shree Krishna Resort & Retreat</h1>
-      <p>Ayodhya Hills, Purulia, West Bengal | Luxury Eco-Stay & Fine Dining</p>
-    </div>
-    <div id="clock" style="font-size: 0.9rem; font-weight: 500;"></div>
+    <h1>Srikrishna Resort & Retreat</h1>
+    <p>Purulia | Front Office & Guest Management System</p>
   </header>
 
-  <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('resortView')">Resort & Cottages View</button>
-    <button class="tab-btn" onclick="switchTab('restaurantMenu')">Dining & Food Menu</button>
-    <button class="tab-btn" onclick="switchTab('barMenu')">Bar Counter & Lounge</button>
-    <button class="tab-btn" onclick="switchTab('dashboard')">Room & Cottage Inventory</button>
-    <button class="tab-btn" onclick="switchTab('operations')">Front Desk & Billing</button>
-    <button class="tab-btn audit-tab-btn" onclick="switchTab('nightAudit')">Night Audit & EOD</button>
-    <button class="tab-btn" onclick="switchTab('reports')">Folio Ledger & Reports</button>
-  </nav>
-
-  <div class="container">
-    <!-- Resort Overview -->
-    <section id="resortView" class="tab-content active">
-      <div class="hero-banner">
-        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
-        <div class="hero-text">
-          <h2>Welcome to Shree Krishna Resort & Retreat</h2>
-          <p>Serene natural landscapes, luxury cottage accommodations, and lush green lawns in Ayodhya Hills</p>
-        </div>
-      </div>
-
+  <div class="grid">
+    <!-- Check-in Section -->
+    <div>
       <div class="card">
-        <h3>Accommodation, Lawns & Guest Amenities</h3>
-        <p style="color:var(--text-muted); font-size:0.9rem;">Experience open landscaped gardens, private cottages, and luxury stays amidst nature.</p>
-        
-        <div class="gallery-grid">
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=700&q=80" alt="Resort Garden Lawn">
-            <div class="gallery-info">
-              <h4>Lush Green Lawns & Garden</h4>
-              <p>Spacious open-air manicured green lawns for evening walks, family relaxation, and campfires under the starry skies.</p>
-            </div>
-          </div>
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=700&q=80" alt="Heritage Standalone Cottage">
-            <div class="gallery-info">
-              <h4>Heritage Garden Cottage (C-01 to C-10)</h4>
-              <p>Independent luxury cottages situated in open garden areas featuring private wooden patios and panoramic forest views.</p>
-            </div>
-          </div>
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=700&q=80" alt="Deluxe Room">
-            <div class="gallery-info">
-              <h4>Deluxe AC Room</h4>
-              <p>Comfort-crafted interior, climate control AC, premium king bed, and private balcony overlooking lush greenery.</p>
-            </div>
-          </div>
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=700&q=80" alt="Eco Family Suite">
-            <div class="gallery-info">
-              <h4>Eco Family Suite</h4>
-              <p>Spacious interconnected two-room suites with contemporary living spaces designed for complete family vacations.</p>
-            </div>
-          </div>
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=700&q=80" alt="Govinda Dining Hall">
-            <div class="gallery-info">
-              <h4>Govinda Dining Hall</h4>
-              <p>Fine dining multi-cuisine restaurant serving farm-fresh local Purulia delicacies and traditional Bengali thali spreads.</p>
-            </div>
-          </div>
+        <h2>Guest Check-In</h2>
+        <div class="form-group">
+          <label>Guest Full Name:</label>
+          <input type="text" id="gName" placeholder="e.g. Rahul Sharma">
         </div>
+        <div class="form-group">
+          <label>Phone Number:</label>
+          <input type="tel" id="gPhone" placeholder="10-digit mobile number">
+        </div>
+        <div class="form-group">
+          <label>Room Number:</label>
+          <input type="text" id="gRoom" placeholder="e.g. 101, 202">
+        </div>
+        <div class="form-group">
+          <label>Room Tariff Per Day (₹):</label>
+          <input type="number" id="gRent" value="1200">
+        </div>
+        <button onclick="checkInGuest()">Confirm Check-In</button>
       </div>
-    </section>
 
-    <!-- Dining & Food Menu -->
-    <section id="restaurantMenu" class="tab-content">
+      <!-- Add Meal / Room Service Section -->
       <div class="card">
-        <h3>Govinda Dining Hall - Food Menu</h3>
-        <div class="menu-grid">
-          <div class="menu-category">
-            <h4>Breakfast Specials (07:30 AM - 10:30 AM)</h4>
-            <div class="menu-item"><div><div class="item-name">Luchi with Alur Dom (4 pcs)</div></div><div class="item-price">₹120</div></div>
-            <div class="menu-item"><div><div class="item-name">Aloo Paratha with Curd & Pickle (2 pcs)</div></div><div class="item-price">₹140</div></div>
-            <div class="menu-item"><div><div class="item-name">Bread Omelette (2 Eggs)</div></div><div class="item-price">₹90</div></div>
-            <div class="menu-item"><div><div class="item-name">Masala Tea / Organic Tea</div></div><div class="item-price">₹30</div></div>
-          </div>
-          <div class="menu-category">
-            <h4>Lunch & Dinner Thali Specials</h4>
-            <div class="menu-item"><div><div class="item-name">Special Bengali Veg Thali</div></div><div class="item-price">₹220</div></div>
-            <div class="menu-item"><div><div class="item-name">Desi Chicken Curry Thali</div></div><div class="item-price">₹360</div></div>
-            <div class="menu-item"><div><div class="item-name">Purulia Mutton Thali (4 pcs)</div></div><div class="item-price">₹480</div></div>
-            <div class="menu-item"><div><div class="item-name">Katla Dam Fish Thali (1 pc)</div></div><div class="item-price">₹290</div></div>
-          </div>
-          <div class="menu-category">
-            <h4>Evening Snacks & Starters</h4>
-            <div class="menu-item"><div><div class="item-name">Chicken Pakora (8 pcs)</div></div><div class="item-price">₹180</div></div>
-            <div class="menu-item"><div><div class="item-name">Paneer Pakora (6 pcs)</div></div><div class="item-price">₹150</div></div>
-            <div class="menu-item"><div><div class="item-name">Veg Cutlet (2 pcs)</div></div><div class="item-price">₹90</div></div>
-            <div class="menu-item"><div><div class="item-name">Mineral Water Bottle (1L)</div></div><div class="item-price">₹25</div></div>
-          </div>
+        <h2>Add Meal / Room Service</h2>
+        <div class="form-group">
+          <label>Select Guest:</label>
+          <select id="selectGuestMeal"></select>
         </div>
+        <div class="form-group">
+          <label>Item Description:</label>
+          <input type="text" id="mealDesc" placeholder="e.g. Lunch Thali, Evening Tea & Snacks">
+        </div>
+        <div class="form-group">
+          <label>Quantity / Plates:</label>
+          <input type="number" id="mealQty" value="1">
+        </div>
+        <div class="form-group">
+          <label>Total Price (₹):</label>
+          <input type="number" id="mealCost" placeholder="Enter amount">
+        </div>
+        <button onclick="addMealToGuest()">Add to Guest Account</button>
       </div>
-    </section>
+    </div>
 
-    <!-- Bar Counter Menu -->
-    <section id="barMenu" class="tab-content">
+    <!-- Active Guests List -->
+    <div>
       <div class="card">
-        <h3>Madhushala Bar & Spirits Lounge</h3>
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Official resort lounge menu. Off-shop and bar counter service available for in-house residents.</p>
-        <div class="menu-grid">
-          <div class="menu-category">
-            <h4>Whisky & Scotch (Peg / Bottle)</h4>
-            <div class="menu-item"><div><div class="item-name">Royal Challenge (60 ml)</div><div class="item-desc">Premium Grain Whisky</div></div><div class="item-price">₹140</div></div>
-            <div class="menu-item"><div><div class="item-name">Blenders Pride Rare (60 ml)</div><div class="item-desc">Reserve Select</div></div><div class="item-price">₹180</div></div>
-            <div class="menu-item"><div><div class="item-name">100 Pipers 12 Yrs Scotch (60 ml)</div><div class="item-desc">Blended Scotch Whisky</div></div><div class="item-price">₹320</div></div>
-            <div class="menu-item"><div><div class="item-name">Black Dog Triple Gold (60 ml)</div><div class="item-desc">Reserve Blended Scotch</div></div><div class="item-price">₹350</div></div>
-          </div>
-          <div class="menu-category">
-            <h4>Beer & Refreshments (Pint / Can)</h4>
-            <div class="menu-item"><div><div class="item-name">Kingfisher Premium Lager (650 ml)</div><div class="item-desc">Chilled Beer</div></div><div class="item-price">₹220</div></div>
-            <div class="menu-item"><div><div class="item-name">Budweiser Magnum (650 ml)</div><div class="item-desc">Strong Beer</div></div><div class="item-price">₹280</div></div>
-            <div class="menu-item"><div><div class="item-name">Heineken Silver (650 ml)</div><div class="item-desc">Crisp Smooth Draught</div></div><div class="item-price">₹290</div></div>
-            <div class="menu-item"><div><div class="item-name">Corona Extra (330 ml)</div><div class="item-desc">Served with Lime</div></div><div class="item-price">₹310</div></div>
-          </div>
-          <div class="menu-category">
-            <h4>Rum, Vodka & Cocktails</h4>
-            <div class="menu-item"><div><div class="item-name">Old Monk Original Rum (60 ml)</div><div class="item-desc">Legendary Dark Rum</div></div><div class="item-price">₹110</div></div>
-            <div class="menu-item"><div><div class="item-name">Bacardi Superior White Rum (60 ml)</div><div class="item-desc">Classic Cocktail Rum</div></div><div class="item-price">₹160</div></div>
-            <div class="menu-item"><div><div class="item-name">Magic Moments Premium Vodka (60 ml)</div><div class="item-desc">Triple Distilled Vodka</div></div><div class="item-price">₹130</div></div>
-            <div class="menu-item"><div><div class="item-name">Soda Water / Tonic Water / Juice Can</div><div class="item-desc">Mixers & Chasers</div></div><div class="item-price">₹60</div></div>
-          </div>
+        <h2>Active In-House Guests</h2>
+        <div id="activeGuestContainer">
+          <p style="color: #666; font-size: 14px;">No active guests currently checked in.</p>
         </div>
-      </div>
-    </section>
-
-    <!-- Room & Cottage Inventory Matrix -->
-    <section id="dashboard" class="tab-content">
-      <div class="grid-4" style="margin-bottom: 1.5rem;">
-        <div class="card" style="border-left: 4px solid var(--available); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Available Units</p>
-          <h3 id="stat-available" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
-        </div>
-        <div class="card" style="border-left: 4px solid var(--occupied); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Occupied Units</p>
-          <h3 id="stat-occupied" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
-        </div>
-        <div class="card" style="border-left: 4px solid var(--dirty); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Dirty / Cleaning Needed</p>
-          <h3 id="stat-dirty" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
-        </div>
-        <div class="card" style="border-left: 4px solid var(--cottage-border); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Total Inventory (Rooms + Cottages)</p>
-          <h3 id="stat-total" style="font-size:1.8rem; margin-top:0.25rem;">50</h3>
-        </div>
-      </div>
-      
-      <div class="card">
-        <h3>Heritage Independent Cottages (C-01 to C-10)</h3>
-        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 0.5rem;">Stand-alone luxury cottages situated in open garden areas.</p>
-        <div class="room-grid" id="cottageMatrixContainer"></div>
-      </div>
-
-      <div class="card">
-        <h3>Main Complex Rooms (40 Units)</h3>
-        <div class="room-grid" id="roomMatrixContainer"></div>
-      </div>
-    </section>
-
-    <!-- Front Desk Operations -->
-    <section id="operations" class="tab-content">
-      <div class="grid-2">
-        <div class="card">
-          <h3>Guest Check-In</h3>
-          <form id="checkInForm" onsubmit="handleCheckIn(event)">
-            <div class="form-row form-group">
-              <div>
-                <label>Customer Reference ID</label>
-                <input type="text" id="ciRefId" style="font-weight:bold; color:var(--primary);">
-              </div>
-              <div>
-                <label>Select Room or Cottage</label>
-                <select id="ciRoomSelect" required></select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Contact Phone (Auto-detects returning guest)</label>
-              <input type="tel" id="ciGuestPhone" required placeholder="10-digit Mobile" oninput="lookupReturningGuest()">
-            </div>
-            <div class="form-group">
-              <label>Guest Full Name</label>
-              <input type="text" id="ciGuestName" required placeholder="e.g. Rahul Sharma">
-            </div>
-            <div class="form-row form-group">
-              <div>
-                <label>Adults</label>
-                <input type="number" id="ciAdults" min="1" max="10" value="1" required>
-              </div>
-              <div>
-                <label>Children</label>
-                <input type="number" id="ciChildren" min="0" max="10" value="0" required>
-              </div>
-            </div>
-
-            <!-- Nationality / Form C Selector -->
-            <div class="form-row form-group">
-              <div>
-                <label>Nationality</label>
-                <select id="ciNationality" onchange="handleNationalityChange()">
-                  <option value="Indian">Indian Resident</option>
-                  <option value="Foreigner">Foreign National (Requires Form C)</option>
-                </select>
-              </div>
-              <div>
-                <label>ID Document Type</label>
-                <select id="ciIdType">
-                  <option value="Aadhaar Card">Aadhaar Card</option>
-                  <option value="Passport">Passport</option>
-                  <option value="Voter ID">Voter ID</option>
-                  <option value="Driving License">Driving License</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>ID Document Number</label>
-              <input type="text" id="ciIdNumber" required placeholder="Document Number">
-            </div>
-
-            <!-- Form C Details (FRRO / Bureau of Immigration) -->
-            <div id="formCBox" class="form-c-box">
-              <h4 style="color:#c2410c; margin-bottom:0.5rem; font-size:0.95rem;">Mandatory Form C Details (FRRO Compliance)</h4>
-              <div class="form-row form-group">
-                <div>
-                  <label style="font-size:0.8rem;">Passport Expiry</label>
-                  <input type="date" id="fcPassExp">
-                </div>
-                <div>
-                  <label style="font-size:0.8rem;">Country of Origin</label>
-                  <input type="text" id="fcCountry" placeholder="e.g. United Kingdom">
-                </div>
-              </div>
-              <div class="form-row form-group">
-                <div>
-                  <label style="font-size:0.8rem;">Visa Number</label>
-                  <input type="text" id="fcVisaNo" placeholder="Visa Number">
-                </div>
-                <div>
-                  <label style="font-size:0.8rem;">Visa Type / Valid Till</label>
-                  <input type="date" id="fcVisaExp">
-                </div>
-              </div>
-              <div class="form-row form-group">
-                <div>
-                  <label style="font-size:0.8rem;">Port of Arrival (India)</label>
-                  <input type="text" id="fcPort" placeholder="e.g. Kolkata Airport">
-                </div>
-                <div>
-                  <label style="font-size:0.8rem;">Next Destination</label>
-                  <input type="text" id="fcNextDest" placeholder="e.g. Varanasi / Kolkata">
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row form-group">
-              <div>
-                <label>Check-In Date</label>
-                <input type="date" id="ciCheckInDate" required>
-              </div>
-              <div>
-                <label>Check-In Time</label>
-                <input type="time" id="ciCheckInTime" value="12:00" required>
-              </div>
-            </div>
-            <div class="form-row form-group">
-              <div>
-                <label>Expected Check-Out Date</label>
-                <input type="date" id="ciCheckOutDate" required>
-              </div>
-              <div>
-                <label>Expected Check-Out Time</label>
-                <input type="time" id="ciCheckOutTime" value="11:00" required>
-              </div>
-            </div>
-            <div class="form-row form-group">
-              <div>
-                <label>Daily Rate (₹)</label>
-                <input type="number" id="ciRate" min="0" required>
-              </div>
-              <div>
-                <label>Advance Payment (₹)</label>
-                <input type="number" id="ciAdvance" min="0" value="0">
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Confirm Guest Check-In</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h3>Guest Check-Out & Settlement</h3>
-          <form id="checkOutSearchForm" onsubmit="loadBillingDetails(event)">
-            <div class="form-group">
-              <label>Active Occupied Room / Cottage</label>
-              <select id="coRoomSelect" required></select>
-            </div>
-            <button type="submit" class="btn btn-secondary btn-block">Calculate Folio Statement</button>
-          </form>
-
-          <div id="billingSummary" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
-            
-            <div style="background:#eef2ff; padding:1rem; border-radius:6px; margin-bottom:1rem; border:1px solid #c7d2fe;">
-              <h4 style="color:#3730a3; margin-bottom:0.5rem;">Actual Settlement Date & Timing</h4>
-              <div class="form-row">
-                <div>
-                  <label style="font-size:0.8rem;">Actual Check-Out Date</label>
-                  <input type="date" id="coActualDate" onchange="recalculateDurationAndTax()">
-                </div>
-                <div>
-                  <label style="font-size:0.8rem;">Actual Check-Out Time</label>
-                  <input type="time" id="coActualTime" onchange="recalculateDurationAndTax()">
-                </div>
-              </div>
-            </div>
-
-            <div style="background:#f8fafc; padding:1.25rem; border-radius:6px; margin-bottom:1rem; font-size:0.9rem; border:1px solid var(--border);">
-              <p><strong>Ref ID:</strong> <span id="billRefId" style="font-weight:bold; color:var(--primary);"></span></p>
-              <p><strong>Guest Name:</strong> <span id="billGuestName"></span> (<span id="billGuestNat" style="font-weight:600;"></span>)</p>
-              <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
-              <p><strong>Check-In Timestamp:</strong> <span id="billCheckInTimestamp"></span></p>
-              <p><strong>Check-Out Timestamp:</strong> <span id="billCheckOutTimestamp"></span></p>
-              <p><strong>Billable Duration:</strong> <span id="billStayDuration"></span></p>
-              <hr style="margin:0.5rem 0;">
-              <p><strong>Room / Cottage Charges:</strong> ₹<span id="billRoomCharges">0.00</span></p>
-              <p><strong>Food & Spirits Charges:</strong> ₹<span id="billPosCharges">0.00</span></p>
-              <p><strong>Subtotal Amount:</strong> ₹<span id="billSubtotal">0.00</span></p>
-              <p><strong>CGST (6%):</strong> ₹<span id="billCgst">0.00</span></p>
-              <p><strong>SGST (6%):</strong> ₹<span id="billSgst">0.00</span></p>
-              <p><strong>Total with Taxes (12% GST):</strong> ₹<span id="billGrossWithTax">0.00</span></p>
-              <p><strong>Advance Credited:</strong> -₹<span id="billAdvancePaid">0.00</span></p>
-              <hr style="margin:0.5rem 0;">
-              <h3 style="color:var(--primary);">Net Payable Balance: ₹<span id="billNetPayable">0.00</span></h3>
-            </div>
-
-            <!-- Date-wise Multi-item Food & Bar Bill Addition -->
-            <div class="form-group">
-              <label>Add Food & Bar Items to Folio (Date-Tracked)</label>
-              <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap:0.5rem; margin-bottom:0.5rem; align-items:end;">
-                <div>
-                  <label style="font-size:0.75rem; color:var(--text-muted);">Select Item</label>
-                  <select id="quickItemSelect">
-                    <option value="">-- Choose Item --</option>
-                    <optgroup label="Breakfast & Snacks">
-                      <option value="Luchi with Alur Dom|120">Luchi with Alur Dom - ₹120</option>
-                      <option value="Aloo Paratha|140">Aloo Paratha with Curd - ₹140</option>
-                      <option value="Bread Omelette|90">Bread Omelette - ₹90</option>
-                      <option value="Chicken Pakora|180">Chicken Pakora - ₹180</option>
-                      <option value="Paneer Pakora|150">Paneer Pakora - ₹150</option>
-                    </optgroup>
-                    <optgroup label="Main Meals & Thalis">
-                      <option value="Bengali Veg Thali|220">Bengali Veg Thali - ₹220</option>
-                      <option value="Desi Chicken Thali|360">Desi Chicken Curry Thali - ₹360</option>
-                      <option value="Mutton Thali|480">Purulia Mutton Thali - ₹480</option>
-                      <option value="Fish Thali|290">Katla Fish Thali - ₹290</option>
-                    </optgroup>
-                    <optgroup label="Bar Lounge & Spirits">
-                      <option value="Royal Challenge (60ml)|140">Royal Challenge Whisky (60ml) - ₹140</option>
-                      <option value="Blenders Pride (60ml)|180">Blenders Pride Rare (60ml) - ₹180</option>
-                      <option value="100 Pipers Scotch (60ml)|320">100 Pipers Scotch (60ml) - ₹320</option>
-                      <option value="Kingfisher Beer (650ml)|220">Kingfisher Premium Beer - ₹220</option>
-                      <option value="Budweiser Magnum (650ml)|280">Budweiser Magnum Beer - ₹280</option>
-                      <option value="Old Monk Rum (60ml)|110">Old Monk Dark Rum (60ml) - ₹110</option>
-                      <option value="Magic Moments Vodka (60ml)|130">Magic Moments Vodka (60ml) - ₹130</option>
-                      <option value="Mineral Water (1L)|25">Mineral Water Bottle (1L) - ₹25</option>
-                    </optgroup>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; color:var(--text-muted);">Order Date</label>
-                  <input type="date" id="orderItemDate">
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; color:var(--text-muted);">Time</label>
-                  <input type="time" id="orderItemTime">
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; color:var(--text-muted);">Qty</label>
-                  <input type="number" id="quickItemQty" value="1" min="1" title="Quantity">
-                </div>
-                <div>
-                  <button type="button" class="btn btn-outline" style="height:38px;" onclick="addOrderItem()">Add Item</button>
-                </div>
-              </div>
-
-              <div class="order-list-box" id="orderItemsList">
-                <p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>
-              </div>
-            </div>
-
-            <!-- SPLIT FOLIO (SEPARATE BILLING) TOGGLE -->
-            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:0.75rem; margin-top:1.25rem;">
-              <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; font-weight:bold; color:#166534; margin:0;">
-                <input type="checkbox" id="splitFolioCheck" onchange="toggleSplitFolioUI()">
-                Enable Split Folio (Separate Room Rent & Food/Bar Bill or Split Payment)
-              </label>
-
-              <div id="splitFolioPanel" class="split-folio-box">
-                <div class="form-row form-group">
-                  <div>
-                    <label style="font-size:0.8rem;">Split Method</label>
-                    <select id="splitMode" onchange="calculateSplitAmounts()">
-                      <option value="by_department">Split by Category (Folio A: Room / Folio B: Food & Bar)</option>
-                      <option value="fifty_fifty">Split 50% - 50% Equally Between Two Guests</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="grid-2" style="background:#fff; padding:0.75rem; border-radius:4px; border:1px solid #e2e8f0;">
-                  <div>
-                    <h5 style="color:var(--primary);">Folio A (Part 1)</h5>
-                    <p style="font-size:0.85rem;">Payable: <strong>₹<span id="splitFolioA">0.00</span></strong></p>
-                    <select id="splitFolioAMode" style="margin-top:0.35rem; font-size:0.8rem;">
-                      <option value="Card">Debit / Credit Card</option>
-                      <option value="UPI QR">UPI QR</option>
-                      <option value="Cash">Cash</option>
-                    </select>
-                  </div>
-                  <div>
-                    <h5 style="color:var(--secondary);">Folio B (Part 2)</h5>
-                    <p style="font-size:0.85rem;">Payable: <strong>₹<span id="splitFolioB">0.00</span></strong></p>
-                    <select id="splitFolioBMode" style="margin-top:0.35rem; font-size:0.8rem;">
-                      <option value="UPI QR">UPI QR</option>
-                      <option value="Cash">Cash</option>
-                      <option value="Digital Wallet">Digital Wallet</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Single Payment Gateway Selector (Active when Split is unchecked) -->
-            <div id="standardPaymentBox" class="form-group" style="margin-top: 1.5rem;">
-              <label>Select Payment Settlement Gateway</label>
-              <select id="paymentMethod" onchange="handlePaymentMethodChange()">
-                <option value="UPI QR">Unified Payments Interface (UPI QR Code)</option>
-                <option value="Card Gateway">Debit / Credit Card POS Terminal Gateway</option>
-                <option value="Digital Wallet">Digital Wallet (PhonePe / Paytm / Amazon Pay / GPay)</option>
-                <option value="Cash">Cash Settlement Counter</option>
-              </select>
-            </div>
-
-            <!-- UPI QR Gateway Panel -->
-            <div id="upiGatewayPanel" class="gateway-panel active">
-              <div class="qr-container">
-                <p style="font-size:0.9rem; font-weight:600; margin-bottom:0.25rem;">Scan & Pay via any UPI App</p>
-                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem;">Google Pay, PhonePe, Paytm, BHIM</p>
-                <img id="upiQrCode" src="" alt="Dynamic UPI QR" style="width:170px; height:170px;">
-                <p style="font-size:0.8rem; font-weight:600; color:var(--primary); margin-top:0.5rem;">VPA: 9733054199@ybl</p>
-              </div>
-            </div>
-
-            <!-- Card Terminal Gateway Panel -->
-            <div id="cardGatewayPanel" class="gateway-panel">
-              <h4 style="margin-bottom:0.75rem; color:var(--primary);">Card Terminal Payment Gateway</h4>
-              <div class="form-group">
-                <label>Cardholder Name</label>
-                <input type="text" id="cardHolderName" placeholder="Name printed on card">
-              </div>
-              <div class="form-group">
-                <label>Card Number (16 Digits)</label>
-                <input type="text" id="cardNumber" maxlength="19" placeholder="4532 •••• •••• 8892">
-              </div>
-              <div class="form-row form-group">
-                <div>
-                  <label>Expiry (MM/YY)</label>
-                  <input type="text" id="cardExpiry" maxlength="5" placeholder="MM/YY">
-                </div>
-                <div>
-                  <label>CVV</label>
-                  <input type="password" id="cardCvv" maxlength="3" placeholder="•••">
-                </div>
-              </div>
-            </div>
-
-            <!-- Digital Wallet Gateway Panel -->
-            <div id="walletGatewayPanel" class="gateway-panel">
-              <h4 style="margin-bottom:0.75rem; color:var(--primary);">Digital Wallet Integration</h4>
-              <div class="form-group">
-                <label>Select Partner Wallet Provider</label>
-                <select id="walletProvider">
-                  <option value="PhonePe Wallet">PhonePe Wallet</option>
-                  <option value="Paytm Payments Bank">Paytm Wallet</option>
-                  <option value="Amazon Pay Balance">Amazon Pay Balance</option>
-                  <option value="MobiKwik">MobiKwik Wallet</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Registered Wallet Mobile Number</label>
-                <input type="tel" id="walletMobile" placeholder="10-digit mobile number linked to wallet">
-              </div>
-            </div>
-
-            <!-- Cash Counter Panel -->
-            <div id="cashGatewayPanel" class="gateway-panel">
-              <h4 style="margin-bottom:0.75rem; color:var(--primary);">Cash Register Counter</h4>
-              <div class="form-group">
-                <label>Cash Received from Guest (₹)</label>
-                <input type="number" id="cashReceived" min="0" placeholder="e.g. 5000" oninput="calculateCashChange()">
-              </div>
-              <div style="background:#fff; padding:0.75rem; border-radius:4px; border:1px solid var(--border);">
-                <p style="font-size:0.85rem;">Change to Return: <strong>₹<span id="cashChangeReturn">0.00</span></strong></p>
-              </div>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-block" style="margin-top:1.5rem;" onclick="processSettlement()">Complete Settlement & Generate Tax Invoice</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Night Audit & EOD Operations -->
-    <section id="nightAudit" class="tab-content">
-      <div class="card" style="border-top: 4px solid var(--audit-theme);">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-          <div>
-            <h2 style="color:var(--audit-theme);">Night Audit & End-of-Day (EOD) Operations</h2>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Automated business day reconciliation, daily room revenue posting, and financial ledger audit.</p>
-          </div>
-          <button class="btn btn-audit" onclick="runNightAudit()">Run End-of-Day Audit Now</button>
-        </div>
-
-        <div class="grid-4" style="margin-top: 1.5rem;">
-          <div class="audit-stat-card">
-            <h4>Audit Date</h4>
-            <div class="val" id="auditMetricDate" style="font-size:1.3rem;">--</div>
-          </div>
-          <div class="audit-stat-card">
-            <h4>Occupancy Rate</h4>
-            <div class="val" id="auditMetricOccupancy">0%</div>
-          </div>
-          <div class="audit-stat-card">
-            <h4>Occupied / In-House</h4>
-            <div class="val" id="auditMetricInHouse">0 Units</div>
-          </div>
-          <div class="audit-stat-card">
-            <h4>Total Daily Revenue</h4>
-            <div class="val" id="auditMetricRevenue">₹0.00</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="card">
-          <h3>Daily Revenue Breakdown (Flash Report)</h3>
-          <table>
-            <tbody>
-              <tr><td>Room & Cottage Charges (In-House + Settled)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditRoomRev">0.00</span></td></tr>
-              <tr><td>Govinda Dining Hall (Food & Beverage)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditFoodRev">0.00</span></td></tr>
-              <tr><td>Madhushala Bar & Spirits Lounge</td><td style="text-align:right; font-weight:bold;">₹<span id="auditBarRev">0.00</span></td></tr>
-              <tr><td>Total Subtotal (Taxable Goods & Services)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditSubtotal">0.00</span></td></tr>
-              <tr><td>Central GST (CGST @ 6%)</td><td style="text-align:right; color:#4f46e5;">₹<span id="auditCgst">0.00</span></td></tr>
-              <tr><td>State GST (SGST @ 6%)</td><td style="text-align:right; color:#4f46e5;">₹<span id="auditSgst">0.00</span></td></tr>
-              <tr style="background:#eef2ff;"><td><strong>Gross Resort Revenue with GST</strong></td><td style="text-align:right; font-weight:bold; color:var(--audit-theme);">₹<span id="auditGross">0.00</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h3>Payment Gateway Settlement Audit</h3>
-          <table>
-            <tbody>
-              <tr><td>Unified Payments Interface (UPI QR)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditUpiSettled">0.00</span></td></tr>
-              <tr><td>Card POS Terminals (Debit / Credit)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditCardSettled">0.00</span></td></tr>
-              <tr><td>Digital Wallets (PhonePe / Paytm / GPay)</td><td style="text-align:right; font-weight:bold;">₹<span id="auditWalletSettled">0.00</span></td></tr>
-              <tr><td>Front Desk Cash Register</td><td style="text-align:right; font-weight:bold;">₹<span id="auditCashSettled">0.00</span></td></tr>
-              <tr style="background:#f1f5f9;"><td><strong>Total Realized Collections</strong></td><td style="text-align:right; font-weight:bold; color:var(--primary);">₹<span id="auditTotalSettled">0.00</span></td></tr>
-            </tbody>
-          </table>
-          <div style="margin-top:1.5rem; display:flex; gap:0.5rem;">
-            <button class="btn btn-outline btn-block" onclick="printAuditReport()">Print Executive Audit Report</button>
-            <button class="btn btn-secondary btn-block" onclick="exportAuditJSON()">Download Audit Record</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Folio Ledger & Reports -->
-    <section id="reports" class="tab-content">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-          <h3>Front Office Registration Ledger</h3>
-          <button class="btn btn-secondary" onclick="exportLedgerCSV()">Export Ledger (CSV)</button>
-        </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Folio</th>
-                <th>Ref ID</th>
-                <th>Unit</th>
-                <th>Guest Name</th>
-                <th>Nat.</th>
-                <th>Headcount</th>
-                <th>Check-In</th>
-                <th>Check-Out</th>
-                <th>Subtotal</th>
-                <th>GST (12%)</th>
-                <th>Net Paid</th>
-                <th>Payment Mode</th>
-              </tr>
-            </thead>
-            <tbody id="ledgerTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- Print Modal for Tax Invoice -->
-  <div id="invoiceModal" class="modal">
-    <div class="modal-content">
-      <div class="invoice" id="printableInvoice">
-        <div class="invoice-header">
-          <h3>SHREE KRISHNA RESORT & RETREAT</h3>
-          <p>Ayodhya Hills, Purulia, West Bengal - 723143 | Ph: +91 9733054199</p>
-          <p>GSTIN: 19ABCDE1234F1Z5 | State: West Bengal (Code: 19)</p>
-          <h4>TAX INVOICE / GUEST FOLIO</h4>
-        </div>
-        
-        <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-size:0.85rem; border-bottom:1px dashed #000; padding-bottom:0.5rem;">
-          <div>
-            <p><strong>Invoice No:</strong> <span id="invNo"></span></p>
-            <p><strong>Customer Ref ID:</strong> <span id="invRefId" style="font-weight:bold;"></span></p>
-            <p><strong>Unit Assigned:</strong> <span id="invRoom"></span></p>
-            <p><strong>Check-In:</strong> <span id="invCheckIn"></span></p>
-            <p><strong>Check-Out:</strong> <span id="invCheckOut"></span></p>
-          </div>
-          <div style="text-align:right;">
-            <p><strong>Guest:</strong> <span id="invGuest"></span></p>
-            <p><strong>Contact:</strong> <span id="invPhone"></span></p>
-            <p><strong>Guests:</strong> <span id="invPax"></span></p>
-            <p><strong>Invoice Date:</strong> <span id="invDate"></span></p>
-          </div>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Date & Particulars (SAC / HSN)</th>
-              <th style="text-align:right;">Amount (₹)</th>
-            </tr>
-          </thead>
-          <tbody id="invItems"></tbody>
-        </table>
-
-        <div style="text-align:right; margin-top:1rem; font-size:0.88rem; line-height: 1.5;">
-          <p>Subtotal (Taxable Value): ₹<span id="invSubtotal">0.00</span></p>
-          <p>CGST @ 6%: ₹<span id="invCgst">0.00</span></p>
-          <p>SGST @ 6%: ₹<span id="invSgst">0.00</span></p>
-          <p>Gross Amount with GST: ₹<span id="invGross">0.00</span></p>
-          <p>Advance Payment Adjusted: -₹<span id="invAdv">0.00</span></p>
-          <h4 style="margin-top:0.4rem; font-size:1.05rem;">Net Settled Amount: ₹<span id="invNet">0.00</span></h4>
-          <p><strong>Payment Mode / Gateway:</strong> <span id="invMethod"></span></p>
-        </div>
-
-        <div style="margin-top:1.5rem; text-align:center; font-size:0.8rem; border-top:1px dashed #000; padding-top:0.5rem;">
-          <p>Standard Check-In: 12:00 PM | Standard Check-Out: 11:00 AM</p>
-          <p>Thank you for choosing Shree Krishna Resort & Retreat, Ayodhya Hills!</p>
-        </div>
-      </div>
-      
-      <div style="margin-top:1.5rem; display:flex; gap:1rem;">
-        <button class="btn btn-primary btn-block" onclick="window.print()">Print Receipt</button>
-        <button class="btn btn-outline btn-block" onclick="closeModal()">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal for Form C Registration (BoI / FRRO) -->
-  <div id="formCModal" class="modal">
-    <div class="modal-content">
-      <div class="invoice" style="border: 2px solid #c2410c;">
-        <div class="invoice-header">
-          <h3>BUREAU OF IMMIGRATION / GOVT OF INDIA</h3>
-          <p>FORM C (RULE 14 OF REGISTRATION OF FOREIGNERS RULES, 1992)</p>
-          <h4>HOTEL ARRIVAL REPORT OF FOREIGN NATIONAL</h4>
-          <p style="font-size:0.8rem;">Shree Krishna Resort & Retreat, Purulia, West Bengal</p>
-        </div>
-        <div style="font-size:0.85rem; line-height: 1.6;">
-          <p><strong>Reference ID:</strong> <span id="fcModalRef"></span></p>
-          <p><strong>Name of Guest:</strong> <span id="fcModalName"></span></p>
-          <p><strong>Nationality:</strong> <span id="fcModalCountry"></span></p>
-          <p><strong>Passport Number:</strong> <span id="fcModalPass"></span> (Valid till: <span id="fcModalPassExp"></span>)</p>
-          <p><strong>Visa Number:</strong> <span id="fcModalVisa"></span> (Valid till: <span id="fcModalVisaExp"></span>)</p>
-          <p><strong>Port of Arrival into India:</strong> <span id="fcModalPort"></span></p>
-          <p><strong>Date & Time of Arrival at Hotel:</strong> <span id="fcModalArr"></span></p>
-          <p><strong>Intended Next Destination:</strong> <span id="fcModalNext"></span></p>
-          <p><strong>Local Contact / Mobile:</strong> <span id="fcModalContact"></span></p>
-        </div>
-        <div style="margin-top:1.5rem; border-top:1px dashed #000; padding-top:0.5rem; font-size:0.75rem; text-align:center;">
-          <p>Duly submitted within 24 hours of arrival to the FRRO/FRO Purulia Sadar jurisdiction.</p>
-        </div>
-      </div>
-      <div style="margin-top:1.5rem; display:flex; gap:1rem;">
-        <button class="btn btn-primary btn-block" onclick="window.print()">Print Form C Record</button>
-        <button class="btn btn-outline btn-block" onclick="document.getElementById('formCModal').classList.remove('active')">Close</button>
-      </div>
+  <!-- Printable Invoice Format -->
+  <div id="invoice">
+    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+      <h2>Srikrishna Resort & Retreat</h2>
+      <p>Purulia, West Bengal | Phone: +91 XXXXXXXXXX</p>
+      <h3>Guest Final Bill / Invoice</h3>
+    </div>
+    <div style="margin-bottom: 15px; font-size: 14px;" id="invGuestDetails"></div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1" cellpadding="8" id="invTable">
+      <thead>
+        <tr style="background: #f0f0f0;">
+          <th>SL</th>
+          <th>Description</th>
+          <th>Qty/Days</th>
+          <th>Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="invTableBody"></tbody>
+    </table>
+    <h3 style="text-align: right;" id="invTotal"></h3>
+    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+      <div>Guest Signature</div>
+      <div>Authorized Signatory</div>
     </div>
   </div>
+</div>
 
-  <script>
-    const ROOM_TYPES = {
-      DELUXE: { name: 'Deluxe AC', rate: 2500 },
-      SUPER_DELUXE: { name: 'Super Deluxe AC', rate: 3500 },
-      FAMILY_SUITE: { name: 'Eco Family Suite', rate: 5000 },
-      STANDARD: { name: 'Standard Non-AC', rate: 1800 },
-      COTTAGE: { name: 'Heritage Luxury Cottage', rate: 3500 }
+<script>
+  let guests = JSON.parse(localStorage.getItem('resort_guests_data')) || [];
+
+  function saveData() {
+    localStorage.setItem('resort_guests_data', JSON.stringify(guests));
+    renderGuests();
+  }
+
+  function checkInGuest() {
+    const name = document.getElementById('gName').value.trim();
+    const phone = document.getElementById('gPhone').value.trim();
+    const room = document.getElementById('gRoom').value.trim();
+    const rent = parseFloat(document.getElementById('gRent').value) || 0;
+
+    if (!name || !room) {
+      alert("Please enter both Guest Name and Room Number.");
+      return;
+    }
+
+    const newGuest = {
+      id: Date.now(),
+      name: name,
+      phone: phone,
+      room: room,
+      rent: rent,
+      checkInDate: new Date().toLocaleDateString('en-GB'),
+      meals: [] // List that preserves Lunch, Snacks, Dinner permanently
     };
 
-    let rooms = [];
-    let ledger = [];
-    let currentSettlement = null;
-    let lastAuditReport = null;
+    guests.push(newGuest);
+    saveData();
 
-    function generateRefId() {
-      return 'REF-' + Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('gName').value = '';
+    document.getElementById('gPhone').value = '';
+    document.getElementById('gRoom').value = '';
+    alert("Guest successfully checked in!");
+  }
+
+  function addMealToGuest() {
+    const guestId = document.getElementById('selectGuestMeal').value;
+    const desc = document.getElementById('mealDesc').value.trim();
+    const qty = parseInt(document.getElementById('mealQty').value) || 1;
+    const cost = parseFloat(document.getElementById('mealCost').value) || 0;
+
+    if (!guestId) {
+      alert("Please select a guest from the list.");
+      return;
+    }
+    if (!desc || cost <= 0) {
+      alert("Please enter item description and valid price.");
+      return;
     }
 
-    function initInventory() {
-      const savedRooms = localStorage.getItem('krishna_rooms_v6');
-      const savedLedger = localStorage.getItem('krishna_ledger_v6');
-      const savedAudit = localStorage.getItem('krishna_audit_v6');
+    const guest = guests.find(g => g.id == guestId);
+    if (guest) {
+      if (!guest.meals) guest.meals = [];
 
-      if (savedLedger) ledger = JSON.parse(savedLedger);
-      if (savedAudit) lastAuditReport = JSON.parse(savedAudit);
-
-      if (savedRooms) {
-        rooms = JSON.parse(savedRooms);
-      } else {
-        rooms = [];
-        // 10 Independent Cottages
-        for (let c = 1; c <= 10; c++) {
-          const cNo = 'C-' + (c < 10 ? '0' + c : c);
-          rooms.push({ id: 'cot_' + c, number: cNo, type: ROOM_TYPES.COTTAGE.name, rate: ROOM_TYPES.COTTAGE.rate, status: 'available', isCottage: true, guest: null });
-        }
-        // 40 Main Building Rooms
-        for (let i = 101; i <= 110; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.STANDARD.name, rate: ROOM_TYPES.STANDARD.rate, status: 'available', isCottage: false, guest: null });
-        for (let i = 201; i <= 215; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.DELUXE.name, rate: ROOM_TYPES.DELUXE.rate, status: 'available', isCottage: false, guest: null });
-        for (let i = 301; i <= 310; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.SUPER_DELUXE.name, rate: ROOM_TYPES.SUPER_DELUXE.rate, status: 'available', isCottage: false, guest: null });
-        for (let i = 401; i <= 405; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.FAMILY_SUITE.name, rate: ROOM_TYPES.FAMILY_SUITE.rate, status: 'available', isCottage: false, guest: null });
-        saveRooms();
-      }
-      document.getElementById('ciRefId').value = generateRefId();
-      
-      const todayStr = new Date().toISOString().split('T')[0];
-      if (document.getElementById('ciCheckInDate')) document.getElementById('ciCheckInDate').value = todayStr;
-      if (document.getElementById('ciCheckOutDate')) document.getElementById('ciCheckOutDate').value = todayStr;
-    }
-
-    function saveRooms() { localStorage.setItem('krishna_rooms_v6', JSON.stringify(rooms)); }
-    function saveLedger() { localStorage.setItem('krishna_ledger_v6', JSON.stringify(ledger)); }
-    function saveAudit() { localStorage.setItem('krishna_audit_v6', JSON.stringify(lastAuditReport)); }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
-      if (tabId === 'dashboard') renderDashboard();
-      if (tabId === 'operations') {
-        populateDropdowns();
-        if(!document.getElementById('ciRefId').value) {
-          document.getElementById('ciRefId').value = generateRefId();
-        }
-      }
-      if (tabId === 'nightAudit') renderNightAuditDashboard();
-      if (tabId === 'reports') renderLedger();
-    }
-
-    function markRoomClean(roomNumber) {
-      const room = rooms.find(r => r.number === roomNumber);
-      if (room) {
-        room.status = 'available';
-        saveRooms();
-        renderDashboard();
-        populateDropdowns();
-      }
-    }
-
-    function handleNationalityChange() {
-      const nat = document.getElementById('ciNationality').value;
-      const formC = document.getElementById('formCBox');
-      const idType = document.getElementById('ciIdType');
-      if (nat === 'Foreigner') {
-        formC.style.display = 'block';
-        idType.value = 'Passport';
-      } else {
-        formC.style.display = 'none';
-        idType.value = 'Aadhaar Card';
-      }
-    }
-
-    function renderDashboard() {
-      const roomContainer = document.getElementById('roomMatrixContainer');
-      const cottageContainer = document.getElementById('cottageMatrixContainer');
-      roomContainer.innerHTML = '';
-      cottageContainer.innerHTML = '';
-
-      let counts = { available: 0, occupied: 0, dirty: 0 };
-
-      rooms.forEach(room => {
-        counts[room.status]++;
-        const div = document.createElement('div');
-        div.className = `room-card ${room.status} ${room.isCottage ? 'cottage-type' : ''}`;
-        
-        let extraAction = '';
-        if (room.status === 'dirty') {
-          extraAction = `<button class="clean-btn" onclick="markRoomClean('${room.number}')">Mark Clean</button>`;
-        }
-
-        div.innerHTML = `
-          <div class="room-no">${room.number}</div>
-          <div class="room-type">${room.type}</div>
-          <div class="room-status status-${room.status}">${room.status === 'dirty' ? 'Dirty / Clean Needed' : room.status}</div>
-          ${room.guest ? `<div style="font-size:0.72rem; margin-top:0.25rem; font-weight:600;">${room.guest.name} ${room.guest.nationality === 'Foreigner' ? '🌐' : ''}</div>` : ''}
-          ${extraAction}
-        `;
-
-        if (room.isCottage) {
-          cottageContainer.appendChild(div);
-        } else {
-          roomContainer.appendChild(div);
-        }
+      // Appending new order to list without overwriting previous items
+      guest.meals.push({
+        id: Date.now(),
+        item: desc,
+        quantity: qty,
+        price: cost,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
-      document.getElementById('stat-available').innerText = counts.available;
-      document.getElementById('stat-occupied').innerText = counts.occupied;
-      document.getElementById('stat-dirty').innerText = counts.dirty;
-      document.getElementById('stat-total').innerText = rooms.length;
+      saveData();
+      document.getElementById('mealDesc').value = '';
+      document.getElementById('mealCost').value = '';
+      alert("Service item successfully recorded!");
+    }
+  }
+
+  function renderGuests() {
+    const container = document.getElementById('activeGuestContainer');
+    const select = document.getElementById('selectGuestMeal');
+
+    container.innerHTML = '';
+    select.innerHTML = '<option value="">Select a guest</option>';
+
+    if (guests.length === 0) {
+      container.innerHTML = '<p style="color: #666; font-size: 14px;">No active guests currently checked in.</p>';
+      return;
     }
 
-    function populateDropdowns() {
-      const ciSelect = document.getElementById('ciRoomSelect');
-      const coSelect = document.getElementById('coRoomSelect');
-      ciSelect.innerHTML = '<option value="">-- Choose Vacant Unit --</option>';
-      coSelect.innerHTML = '<option value="">-- Choose Occupied Unit --</option>';
+    guests.forEach(guest => {
+      // Update dropdown selection
+      const opt = document.createElement('option');
+      opt.value = guest.id;
+      opt.textContent = `${guest.name} (Room: ${guest.room})`;
+      select.appendChild(opt);
 
-      rooms.forEach(room => {
-        if (room.status === 'available') {
-          ciSelect.innerHTML += `<option value="${room.number}">${room.isCottage ? '[Cottage] ' : '[Room] '}${room.number} - ${room.type} (₹${room.rate})</option>`;
-        } else if (room.status === 'occupied') {
-          coSelect.innerHTML += `<option value="${room.number}">${room.isCottage ? '[Cottage] ' : '[Room] '}${room.number} - ${room.guest ? room.guest.name : 'Occupied'}</option>`;
-        }
-      });
-    }
-
-    document.getElementById('ciRoomSelect').addEventListener('change', function() {
-      const room = rooms.find(r => r.number === this.value);
-      if (room) document.getElementById('ciRate').value = room.rate;
-    });
-
-    function lookupReturningGuest() {
-      const phone = document.getElementById('ciGuestPhone').value.trim();
-      if (phone.length >= 10) {
-        const pastRecord = ledger.slice().reverse().find(entry => entry.phone === phone);
-        if (pastRecord) {
-          document.getElementById('ciRefId').value = pastRecord.refId;
-          if (!document.getElementById('ciGuestName').value) {
-            document.getElementById('ciGuestName').value = pastRecord.name;
-          }
-          return;
-        }
-      }
-      if (!document.getElementById('ciRefId').value) {
-        document.getElementById('ciRefId').value = generateRefId();
-      }
-    }
-
-    function handleCheckIn(e) {
-      e.preventDefault();
-      const roomNo = document.getElementById('ciRoomSelect').value;
-      const room = rooms.find(r => r.number === roomNo);
-      if (!room) return;
-
-      const refId = document.getElementById('ciRefId').value || generateRefId();
-      const nat = document.getElementById('ciNationality').value;
-
-      let formCData = null;
-      if (nat === 'Foreigner') {
-        formCData = {
-          passExp: document.getElementById('fcPassExp').value,
-          country: document.getElementById('fcCountry').value || 'Foreign National',
-          visaNo: document.getElementById('fcVisaNo').value,
-          visaExp: document.getElementById('fcVisaExp').value,
-          port: document.getElementById('fcPort').value,
-          nextDest: document.getElementById('fcNextDest').value
-        };
-      }
-
-      room.status = 'occupied';
-      room.guest = {
-        refId: refId,
-        name: document.getElementById('ciGuestName').value,
-        phone: document.getElementById('ciGuestPhone').value,
-        nationality: nat,
-        formC: formCData,
-        adults: document.getElementById('ciAdults').value,
-        children: document.getElementById('ciChildren').value,
-        idType: document.getElementById('ciIdType').value,
-        idNumber: document.getElementById('ciIdNumber').value,
-        checkInDate: document.getElementById('ciCheckInDate').value,
-        checkInTime: document.getElementById('ciCheckInTime').value || '12:00',
-        checkOutDate: document.getElementById('ciCheckOutDate').value,
-        checkOutTime: document.getElementById('ciCheckOutTime').value || '11:00',
-        dailyRate: parseFloat(document.getElementById('ciRate').value),
-        advancePaid: parseFloat(document.getElementById('ciAdvance').value) || 0,
-        orderedItems: []
-      };
-
-      saveRooms();
-
-      if (nat === 'Foreigner') {
-        openFormCModal(room.guest);
-      } else {
-        alert(`Unit ${roomNo} Successfully Checked In!\n[Customer Ref ID: ${refId}]\nCheck-In: ${room.guest.checkInDate} at ${room.guest.checkInTime}`);
-      }
-
-      document.getElementById('checkInForm').reset();
-      document.getElementById('ciRefId').value = generateRefId();
-      document.getElementById('formCBox').style.display = 'none';
-      populateDropdowns();
-    }
-
-    function openFormCModal(guest) {
-      document.getElementById('fcModalRef').innerText = guest.refId;
-      document.getElementById('fcModalName').innerText = guest.name;
-      document.getElementById('fcModalCountry').innerText = guest.formC.country;
-      document.getElementById('fcModalPass').innerText = guest.idNumber;
-      document.getElementById('fcModalPassExp').innerText = guest.formC.passExp || 'N/A';
-      document.getElementById('fcModalVisa').innerText = guest.formC.visaNo || 'N/A';
-      document.getElementById('fcModalVisaExp').innerText = guest.formC.visaExp || 'N/A';
-      document.getElementById('fcModalPort').innerText = guest.formC.port || 'Kolkata Airport';
-      document.getElementById('fcModalArr').innerText = `${guest.checkInDate} ${guest.checkInTime}`;
-      document.getElementById('fcModalNext').innerText = guest.formC.nextDest || 'N/A';
-      document.getElementById('fcModalContact').innerText = guest.phone;
-      document.getElementById('formCModal').classList.add('active');
-    }
-
-    function loadBillingDetails(e) {
-      e.preventDefault();
-      const roomNo = document.getElementById('coRoomSelect').value;
-      const room = rooms.find(r => r.number === roomNo);
-      if (!room || !room.guest) return;
-
-      const g = room.guest;
-      if (!g.orderedItems) g.orderedItems = [];
-
-      const now = new Date();
-      const todayStr = now.toISOString().split('T')[0];
-      const hours = String(now.getHours()).padStart(2, '0');
-      const mins = String(now.getMinutes()).padStart(2, '0');
-      const timeStr = `${hours}:${mins}`;
-
-      document.getElementById('coActualDate').value = todayStr;
-      document.getElementById('coActualTime').value = timeStr;
-      document.getElementById('orderItemDate').value = todayStr;
-      document.getElementById('orderItemTime').value = timeStr;
-
-      currentSettlement = {
-        refId: g.refId || 'N/A',
-        roomNo: room.number,
-        roomType: room.type,
-        guest: g,
-        days: 1,
-        roomCharges: 0,
-        itemsTotal: 0,
-        subtotal: 0,
-        cgst: 0,
-        sgst: 0,
-        grossWithTax: 0,
-        netPayable: 0
-      };
-
-      document.getElementById('billRefId').innerText = currentSettlement.refId;
-      document.getElementById('billGuestName').innerText = g.name;
-      document.getElementById('billGuestNat').innerText = g.nationality || 'Indian';
-      document.getElementById('billGuestCount').innerText = `${g.adults} Adults, ${g.children} Children`;
-      document.getElementById('billAdvancePaid').innerText = g.advancePaid.toFixed(2);
-
-      renderOrderItemsUI();
-      recalculateDurationAndTax();
-      document.getElementById('billingSummary').style.display = 'block';
-    }
-
-    function recalculateDurationAndTax() {
-      if (!currentSettlement) return;
-      const g = currentSettlement.guest;
-
-      const ciDateStr = g.checkInDate;
-      const ciTimeStr = g.checkInTime || '12:00';
-      const coDateStr = document.getElementById('coActualDate').value || new Date().toISOString().split('T')[0];
-      const coTimeStr = document.getElementById('coActualTime').value || '11:00';
-
-      const d1 = new Date(ciDateStr);
-      const d2 = new Date(coDateStr);
-      let diffDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-      if (diffDays <= 0) diffDays = 1;
-
-      currentSettlement.days = diffDays;
-      currentSettlement.roomCharges = diffDays * g.dailyRate;
-
-      document.getElementById('billCheckInTimestamp').innerText = `${ciDateStr} (${ciTimeStr})`;
-      document.getElementById('billCheckOutTimestamp').innerText = `${coDateStr} (${coTimeStr})`;
-      document.getElementById('billStayDuration').innerText = `${diffDays} Day(s) / Night(s)`;
-      document.getElementById('billRoomCharges').innerText = currentSettlement.roomCharges.toFixed(2);
-
-      updateBillingCalculations();
-    }
-
-    function addOrderItem() {
-      if (!currentSettlement) return;
-      const select = document.getElementById('quickItemSelect');
-      const qty = parseInt(document.getElementById('quickItemQty').value) || 1;
-      const orderDate = document.getElementById('orderItemDate').value || new Date().toISOString().split('T')[0];
-      const orderTime = document.getElementById('orderItemTime').value || '12:00';
-
-      if (!select.value) return;
-
-      const [name, price] = select.value.split('|');
-      currentSettlement.guest.orderedItems.push({
-        date: orderDate,
-        time: orderTime,
-        name: name,
-        price: parseFloat(price),
-        qty: qty
-      });
-
-      renderOrderItemsUI();
-      updateBillingCalculations();
-      select.value = '';
-      document.getElementById('quickItemQty').value = '1';
-    }
-
-    function removeOrderItem(index) {
-      if (!currentSettlement) return;
-      currentSettlement.guest.orderedItems.splice(index, 1);
-      renderOrderItemsUI();
-      updateBillingCalculations();
-    }
-
-    function renderOrderItemsUI() {
-      const container = document.getElementById('orderItemsList');
-      container.innerHTML = '';
-      const items = currentSettlement.guest.orderedItems;
-
-      if (!items || items.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>';
-        return;
-      }
-
-      items.forEach((item, index) => {
-        const row = document.createElement('div');
-        row.className = 'order-item-row';
-        row.innerHTML = `
-          <span><small style="color:var(--text-muted); font-weight:600;">[${item.date} ${item.time}]</small> <strong>${item.name}</strong> x ${item.qty} (@₹${item.price})</span>
-          <span>
-            <strong>₹${(item.price * item.qty).toFixed(2)}</strong>
-            <button onclick="removeOrderItem(${index})" style="background:none; border:none; color:red; cursor:pointer; margin-left:8px; font-weight:bold;">&times;</button>
-          </span>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function toggleSplitFolioUI() {
-      const isSplit = document.getElementById('splitFolioCheck').checked;
-      document.getElementById('splitFolioPanel').style.display = isSplit ? 'block' : 'none';
-      document.getElementById('standardPaymentBox').style.display = isSplit ? 'none' : 'block';
-      if (isSplit) {
-        document.querySelectorAll('.gateway-panel').forEach(p => p.classList.remove('active'));
-        calculateSplitAmounts();
-      } else {
-        handlePaymentMethodChange();
-      }
-    }
-
-    function calculateSplitAmounts() {
-      if (!currentSettlement) return;
-      const mode = document.getElementById('splitMode').value;
-      const net = currentSettlement.netPayable;
-      let partA = 0;
-      let partB = 0;
-
-      if (mode === 'fifty_fifty') {
-        partA = net / 2;
-        partB = net / 2;
-      } else {
-        // By Category: Room rent with 12% GST to Folio A, Items with GST to Folio B
-        const roomTotalWithTax = currentSettlement.roomCharges * 1.12 - currentSettlement.guest.advancePaid;
-        const itemsTotalWithTax = currentSettlement.itemsTotal * 1.12;
-        partA = roomTotalWithTax > 0 ? roomTotalWithTax : 0;
-        partB = itemsTotalWithTax > 0 ? itemsTotalWithTax : 0;
-      }
-
-      document.getElementById('splitFolioA').innerText = partA.toFixed(2);
-      document.getElementById('splitFolioB').innerText = partB.toFixed(2);
-    }
-
-    function updateBillingCalculations() {
-      const itemsTotal = currentSettlement.guest.orderedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      currentSettlement.itemsTotal = itemsTotal;
-
-      const subtotal = currentSettlement.roomCharges + itemsTotal;
-      currentSettlement.subtotal = subtotal;
-
-      const cgst = subtotal * 0.06;
-      const sgst = subtotal * 0.06;
-      currentSettlement.cgst = cgst;
-      currentSettlement.sgst = sgst;
-
-      const grossWithTax = subtotal + cgst + sgst;
-      currentSettlement.grossWithTax = grossWithTax;
-
-      const net = grossWithTax - currentSettlement.guest.advancePaid;
-      currentSettlement.netPayable = net > 0 ? net : 0;
-
-      document.getElementById('billPosCharges').innerText = itemsTotal.toFixed(2);
-      document.getElementById('billSubtotal').innerText = subtotal.toFixed(2);
-      document.getElementById('billCgst').innerText = cgst.toFixed(2);
-      document.getElementById('billSgst').innerText = sgst.toFixed(2);
-      document.getElementById('billGrossWithTax').innerText = grossWithTax.toFixed(2);
-      document.getElementById('billNetPayable').innerText = currentSettlement.netPayable.toFixed(2);
-
-      updateUpiQr(currentSettlement.netPayable);
-      calculateCashChange();
-      if (document.getElementById('splitFolioCheck').checked) {
-        calculateSplitAmounts();
-      }
-    }
-
-    function handlePaymentMethodChange() {
-      if (document.getElementById('splitFolioCheck').checked) return;
-      const method = document.getElementById('paymentMethod').value;
-      document.querySelectorAll('.gateway-panel').forEach(p => p.classList.remove('active'));
-
-      if (method === 'UPI QR') {
-        document.getElementById('upiGatewayPanel').classList.add('active');
-      } else if (method === 'Card Gateway') {
-        document.getElementById('cardGatewayPanel').classList.add('active');
-      } else if (method === 'Digital Wallet') {
-        document.getElementById('walletGatewayPanel').classList.add('active');
-      } else if (method === 'Cash') {
-        document.getElementById('cashGatewayPanel').classList.add('active');
-        calculateCashChange();
-      }
-    }
-
-    function calculateCashChange() {
-      if (!currentSettlement) return;
-      const received = parseFloat(document.getElementById('cashReceived').value) || 0;
-      const change = received - currentSettlement.netPayable;
-      document.getElementById('cashChangeReturn').innerText = change > 0 ? change.toFixed(2) : '0.00';
-    }
-
-    function updateUpiQr(amount) {
-      const vpa = "9733054199@ybl";
-      const name = "Shree Krishna Resort";
-      const upiUri = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${amount.toFixed(2)}&cu=INR`;
-      document.getElementById('upiQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}`;
-    }
-
-    function processSettlement() {
-      if (!currentSettlement) return;
-      const folioId = 'FOL-' + Date.now().toString().slice(-6);
-      const isSplit = document.getElementById('splitFolioCheck').checked;
-      
-      let paymentDetails = '';
-      if (isSplit) {
-        const modeA = document.getElementById('splitFolioAMode').value;
-        const modeB = document.getElementById('splitFolioBMode').value;
-        const partA = document.getElementById('splitFolioA').innerText;
-        const partB = document.getElementById('splitFolioB').innerText;
-        paymentDetails = `Split Folio [A: ₹${partA} via ${modeA} | B: ₹${partB} via ${modeB}]`;
-      } else {
-        const method = document.getElementById('paymentMethod').value;
-        if (method === 'Card Gateway') {
-          const last4 = document.getElementById('cardNumber').value.slice(-4) || '8892';
-          paymentDetails = `Card (Ending ${last4})`;
-        } else if (method === 'Digital Wallet') {
-          paymentDetails = `${document.getElementById('walletProvider').value}`;
-        } else if (method === 'Cash') {
-          paymentDetails = 'Cash Counter';
-        } else {
-          paymentDetails = 'UPI QR';
-        }
-      }
-
-      const coDateStr = document.getElementById('coActualDate').value || new Date().toISOString().split('T')[0];
-      const coTimeStr = document.getElementById('coActualTime').value || '11:00';
-
-      const record = {
-        folioId: folioId,
-        refId: currentSettlement.refId,
-        roomNo: currentSettlement.roomNo,
-        name: currentSettlement.guest.name,
-        nationality: currentSettlement.guest.nationality || 'Indian',
-        adults: currentSettlement.guest.adults,
-        children: currentSettlement.guest.children,
-        phone: currentSettlement.guest.phone,
-        checkIn: `${currentSettlement.guest.checkInDate} (${currentSettlement.guest.checkInTime || '12:00 PM'})`,
-        checkOut: `${coDateStr} (${coTimeStr})`,
-        settleDate: coDateStr,
-        roomCharges: currentSettlement.roomCharges,
-        subtotal: currentSettlement.subtotal,
-        gstTotal: currentSettlement.cgst + currentSettlement.sgst,
-        cgst: currentSettlement.cgst,
-        sgst: currentSettlement.sgst,
-        grossWithTax: currentSettlement.grossWithTax,
-        netPaid: currentSettlement.netPayable,
-        method: paymentDetails,
-        items: [...currentSettlement.guest.orderedItems]
-      };
-
-      ledger.push(record);
-      saveLedger();
-
-      const room = rooms.find(r => r.number === currentSettlement.roomNo);
-      room.status = 'dirty';
-      room.guest = null;
-      saveRooms();
-
-      showInvoice(record, currentSettlement);
-      document.getElementById('billingSummary').style.display = 'none';
-      document.getElementById('checkOutSearchForm').reset();
-      document.getElementById('splitFolioCheck').checked = false;
-      document.getElementById('splitFolioPanel').style.display = 'none';
-      document.getElementById('standardPaymentBox').style.display = 'block';
-      populateDropdowns();
-      renderDashboard();
-    }
-
-    function showInvoice(record, settlement) {
-      document.getElementById('invNo').innerText = record.folioId;
-      document.getElementById('invRefId').innerText = record.refId;
-      document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-IN');
-      document.getElementById('invRoom').innerText = record.roomNo;
-      document.getElementById('invCheckIn').innerText = record.checkIn;
-      document.getElementById('invCheckOut').innerText = record.checkOut;
-      document.getElementById('invGuest').innerText = `${record.name} (${record.nationality})`;
-      document.getElementById('invPhone').innerText = record.phone;
-      document.getElementById('invPax').innerText = `${record.adults} Adults, ${record.children} Children`;
-
-      const tbody = document.getElementById('invItems');
-      tbody.innerHTML = `<tr><td>${record.checkIn.split(' ')[0]} to ${record.checkOut.split(' ')[0]} - Room / Cottage Rent (${settlement.days} Nights @ ₹${settlement.guest.dailyRate}) [SAC: 996311]</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>`;
-      
-      if (record.items && record.items.length > 0) {
-        record.items.forEach(it => {
-          tbody.innerHTML += `<tr><td>${it.date} ${it.time} - ${it.name} (Qty: ${it.qty}) [SAC: 996331]</td><td style="text-align:right;">₹${(it.price * it.qty).toFixed(2)}</td></tr>`;
+      // Construct order history table
+      let mealsHTML = '';
+      let totalMealCost = 0;
+      if (guest.meals && guest.meals.length > 0) {
+        mealsHTML = `
+          <div class="food-history">
+            <strong>Room Service / Meal Orders:</strong>
+            <table>
+              <tr><th>Time</th><th>Item</th><th>Qty</th><th>Amount</th></tr>`;
+        guest.meals.forEach(m => {
+          totalMealCost += m.price;
+          mealsHTML += `<tr>
+            <td>${m.time}</td>
+            <td>${m.item}</td>
+            <td>${m.quantity}</td>
+            <td>₹${m.price}</td>
+          </tr>`;
         });
+        mealsHTML += `</table>
+            <div style="text-align:right; margin-top:5px;"><strong>Food Total: ₹${totalMealCost}</strong></div>
+          </div>`;
+      } else {
+        mealsHTML = '<p style="font-size:12px; color:#888; margin-top:5px;">No meals/services recorded yet.</p>';
       }
 
-      document.getElementById('invSubtotal').innerText = record.subtotal.toFixed(2);
-      document.getElementById('invCgst').innerText = record.cgst.toFixed(2);
-      document.getElementById('invSgst').innerText = record.sgst.toFixed(2);
-      document.getElementById('invGross').innerText = record.grossWithTax.toFixed(2);
-      document.getElementById('invAdv').innerText = settlement.guest.advancePaid.toFixed(2);
-      document.getElementById('invNet').innerText = record.netPaid.toFixed(2);
-      document.getElementById('invMethod').innerText = record.method;
+      // Guest Card
+      const card = document.createElement('div');
+      card.className = 'guest-item';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between;">
+          <strong>${guest.name}</strong>
+          <span>Room: <b>${guest.room}</b></span>
+        </div>
+        <div style="font-size: 13px; color: #555; margin: 4px 0;">
+          Phone: ${guest.phone || 'N/A'} | Check-in: ${guest.checkInDate} | Daily Tariff: ₹${guest.rent}
+        </div>
+        ${mealsHTML}
+        <div class="btn-group">
+          <button class="btn-small" onclick="generateInvoice(${guest.id})">Generate Bill & Print</button>
+          <button class="btn-small btn-danger" onclick="checkOutGuest(${guest.id})">Check-Out</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
 
-      document.getElementById('invoiceModal').classList.add('active');
-    }
+  function generateInvoice(guestId) {
+    const guest = guests.find(g => g.id == guestId);
+    if (!guest) return;
 
-    function closeModal() { document.getElementById('invoiceModal').classList.remove('active'); }
+    document.getElementById('invGuestDetails').innerHTML = `
+      <b>Guest Name:</b> ${guest.name} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Contact:</b> ${guest.phone || 'N/A'}<br>
+      <b>Room No:</b> ${guest.room} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Check-in Date:</b> ${guest.checkInDate}
+    `;
 
-    function runNightAudit() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const totalUnits = rooms.length;
-      const occupiedRooms = rooms.filter(r => r.status === 'occupied');
-      const inHouseCount = occupiedRooms.length;
-      const occupancyRate = ((inHouseCount / totalUnits) * 100).toFixed(1);
+    const tbody = document.getElementById('invTableBody');
+    tbody.innerHTML = '';
+    let sl = 1;
+    let grandTotal = 0;
 
-      let inHouseRoomRev = 0;
-      let inHouseFoodRev = 0;
-      let inHouseBarRev = 0;
+    // Room tariff entry
+    tbody.innerHTML += `
+      <tr>
+        <td>${sl++}</td>
+        <td>Room Tariff (1 Night)</td>
+        <td>1</td>
+        <td>₹${guest.rent}</td>
+      </tr>
+    `;
+    grandTotal += guest.rent;
 
-      occupiedRooms.forEach(r => {
-        inHouseRoomRev += r.guest.dailyRate;
-        if (r.guest.orderedItems && r.guest.orderedItems.length > 0) {
-          r.guest.orderedItems.forEach(it => {
-            if (it.name.includes('Whisky') || it.name.includes('Beer') || it.name.includes('Scotch') || it.name.includes('Rum') || it.name.includes('Vodka')) {
-              inHouseBarRev += (it.price * it.qty);
-            } else {
-              inHouseFoodRev += (it.price * it.qty);
-            }
-          });
-        }
-      });
-
-      let settledRoomRev = 0;
-      let settledFoodRev = 0;
-      let settledBarRev = 0;
-      let upiTotal = 0;
-      let cardTotal = 0;
-      let walletTotal = 0;
-      let cashTotal = 0;
-
-      const todaySettlements = ledger.filter(entry => entry.settleDate === todayStr || entry.checkOut.includes(todayStr));
-
-      todaySettlements.forEach(s => {
-        settledRoomRev += (s.roomCharges || 0);
-        if (s.items && s.items.length > 0) {
-          s.items.forEach(it => {
-            if (it.name.includes('Whisky') || it.name.includes('Beer') || it.name.includes('Scotch') || it.name.includes('Rum') || it.name.includes('Vodka')) {
-              settledBarRev += (it.price * it.qty);
-            } else {
-              settledFoodRev += (it.price * it.qty);
-            }
-          });
-        }
-
-        const m = s.method.toLowerCase();
-        if (m.includes('upi')) upiTotal += s.netPaid;
-        else if (m.includes('card')) cardTotal += s.netPaid;
-        else if (m.includes('wallet') || m.includes('phonepe') || m.includes('paytm')) walletTotal += s.netPaid;
-        else cashTotal += s.netPaid;
-      });
-
-      const totalRoomRev = inHouseRoomRev + settledRoomRev;
-      const totalFoodRev = inHouseFoodRev + settledFoodRev;
-      const totalBarRev = inHouseBarRev + settledBarRev;
-      const totalSubtotal = totalRoomRev + totalFoodRev + totalBarRev;
-
-      const cgst = totalSubtotal * 0.06;
-      const sgst = totalSubtotal * 0.06;
-      const grossRev = totalSubtotal + cgst + sgst;
-      const totalSettledToday = upiTotal + cardTotal + walletTotal + cashTotal;
-
-      lastAuditReport = {
-        date: todayStr,
-        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-        totalUnits: totalUnits,
-        inHouseCount: inHouseCount,
-        occupancyRate: occupancyRate,
-        totalRoomRev: totalRoomRev,
-        totalFoodRev: totalFoodRev,
-        totalBarRev: totalBarRev,
-        totalSubtotal: totalSubtotal,
-        cgst: cgst,
-        sgst: sgst,
-        grossRev: grossRev,
-        upiTotal: upiTotal,
-        cardTotal: cardTotal,
-        walletTotal: walletTotal,
-        cashTotal: cashTotal,
-        totalSettledToday: totalSettledToday
-      };
-
-      saveAudit();
-      renderNightAuditDashboard();
-      alert(`Night Audit for ${todayStr} completed successfully!\nAll revenue ledgers & room counts reconciled.`);
-    }
-
-    function renderNightAuditDashboard() {
-      if (!lastAuditReport) {
-        document.getElementById('auditMetricDate').innerText = new Date().toISOString().split('T')[0];
-        return;
-      }
-      const r = lastAuditReport;
-      document.getElementById('auditMetricDate').innerText = r.date;
-      document.getElementById('auditMetricOccupancy').innerText = `${r.occupancyRate}%`;
-      document.getElementById('auditMetricInHouse').innerText = `${r.inHouseCount} / ${r.totalUnits}`;
-      document.getElementById('auditMetricRevenue').innerText = `₹${r.grossRev.toFixed(2)}`;
-
-      document.getElementById('auditRoomRev').innerText = r.totalRoomRev.toFixed(2);
-      document.getElementById('auditFoodRev').innerText = r.totalFoodRev.toFixed(2);
-      document.getElementById('auditBarRev').innerText = r.totalBarRev.toFixed(2);
-      document.getElementById('auditSubtotal').innerText = r.totalSubtotal.toFixed(2);
-      document.getElementById('auditCgst').innerText = r.cgst.toFixed(2);
-      document.getElementById('auditSgst').innerText = r.sgst.toFixed(2);
-      document.getElementById('auditGross').innerText = r.grossRev.toFixed(2);
-
-      document.getElementById('auditUpiSettled').innerText = r.upiTotal.toFixed(2);
-      document.getElementById('auditCardSettled').innerText = r.cardTotal.toFixed(2);
-      document.getElementById('auditWalletSettled').innerText = r.walletTotal.toFixed(2);
-      document.getElementById('auditCashSettled').innerText = r.cashTotal.toFixed(2);
-      document.getElementById('auditTotalSettled').innerText = r.totalSettledToday.toFixed(2);
-    }
-
-    function printAuditReport() {
-      if (!lastAuditReport) { alert('Please run Night Audit before printing.'); return; }
-      window.print();
-    }
-
-    function exportAuditJSON() {
-      if (!lastAuditReport) { alert('Please run Night Audit before downloading.'); return; }
-      const blob = new Blob([JSON.stringify(lastAuditReport, null, 2)], { type: 'application/json' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `Shree_Krishna_Resort_Night_Audit_${lastAuditReport.date}.json`);
-      a.click();
-    }
-
-    function renderLedger() {
-      const tbody = document.getElementById('ledgerTableBody');
-      tbody.innerHTML = '';
-      ledger.slice().reverse().forEach(row => {
+    // Itemized meal entries
+    if (guest.meals && guest.meals.length > 0) {
+      guest.meals.forEach(m => {
         tbody.innerHTML += `
           <tr>
-            <td><strong>${row.folioId}</strong></td>
-            <td><span style="font-weight:600; color:var(--primary);">${row.refId || 'N/A'}</span></td>
-            <td>${row.roomNo}</td>
-            <td>${row.name}</td>
-            <td>${row.nationality || 'Indian'}</td>
-            <td>${row.adults}A, ${row.children}C</td>
-            <td>${row.checkIn}</td>
-            <td>${row.checkOut}</td>
-            <td>₹${row.subtotal.toFixed(2)}</td>
-            <td>₹${row.gstTotal.toFixed(2)}</td>
-            <td>₹${row.netPaid.toFixed(2)}</td>
-            <td><small>${row.method}</small></td>
+            <td>${sl++}</td>
+            <td>${m.item} (${m.time})</td>
+            <td>${m.quantity}</td>
+            <td>₹${m.price}</td>
           </tr>
         `;
+        grandTotal += m.price;
       });
     }
 
-    function exportLedgerCSV() {
-      if(ledger.length === 0) { alert('No ledger data available to export.'); return; }
-      let csv = 'Folio ID,Customer Ref ID,Unit,Guest Name,Nationality,Headcount,Check-In,Check-Out,Subtotal,GST Total,Net Paid,Payment Method\n';
-      ledger.forEach(r => {
-        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.nationality || 'Indian'}","${r.adults}A ${r.children}C","${r.checkIn}","${r.checkOut}","${r.subtotal}","${r.gstTotal}","${r.netPaid}","${r.method}"\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `Shree_Krishna_Resort_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
-      a.click();
-    }
+    document.getElementById('invTotal').textContent = `Total Payable: ₹${grandTotal}`;
+    
+    // Open system print dialog
+    window.print();
+  }
 
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').innerText = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'medium' });
+  function checkOutGuest(guestId) {
+    if (confirm("Are you sure you want to check out this guest and archive the record?")) {
+      guests = guests.filter(g => g.id != guestId);
+      saveData();
     }
+  }
 
-    setInterval(updateClock, 1000);
-    initInventory();
-    populateDropdowns();
-    updateClock();
-  </script>
+  window.onload = renderGuests;
+</script>
+
 </body>
 </html>
