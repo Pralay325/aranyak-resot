@@ -299,9 +299,15 @@
         <div class="card">
           <h3>Guest Check-In</h3>
           <form id="checkInForm" onsubmit="handleCheckIn(event)">
-            <div class="form-group">
-              <label>Select Room</label>
-              <select id="ciRoomSelect" required></select>
+            <div class="form-row form-group">
+              <div>
+                <label>Customer Reference ID</label>
+                <input type="text" id="ciRefId" readonly style="background:#f1f5f9; font-weight:bold; color:var(--primary);">
+              </div>
+              <div>
+                <label>Select Room</label>
+                <select id="ciRoomSelect" required></select>
+              </div>
             </div>
             <div class="form-group">
               <label>Guest Full Name</label>
@@ -372,6 +378,7 @@
 
           <div id="billingSummary" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
             <div style="background:#f8fafc; padding:1rem; border-radius:4px; margin-bottom:1rem; font-size:0.9rem;">
+              <p><strong>Ref ID:</strong> <span id="billRefId" style="font-weight:bold; color:var(--primary);"></span></p>
               <p><strong>Guest:</strong> <span id="billGuestName"></span></p>
               <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
               <p><strong>Duration:</strong> <span id="billStayDuration"></span></p>
@@ -441,6 +448,7 @@
             <thead>
               <tr>
                 <th>Folio</th>
+                <th>Ref ID</th>
                 <th>Room</th>
                 <th>Guest Name</th>
                 <th>Adults</th>
@@ -472,6 +480,7 @@
         <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-size:0.85rem;">
           <div>
             <p><strong>Invoice No:</strong> <span id="invNo"></span></p>
+            <p><strong>Customer Ref ID:</strong> <span id="invRefId" style="font-weight:bold;"></span></p>
             <p><strong>Date:</strong> <span id="invDate"></span></p>
             <p><strong>Room No:</strong> <span id="invRoom"></span></p>
           </div>
@@ -518,6 +527,10 @@
     let ledger = [];
     let currentSettlement = null;
 
+    function generateRefId() {
+      return 'REF-' + Math.floor(100000 + Math.random() * 900000);
+    }
+
     function initInventory() {
       const savedRooms = localStorage.getItem('niharika_rooms');
       const savedLedger = localStorage.getItem('niharika_ledger');
@@ -534,6 +547,7 @@
         for (let i = 401; i <= 405; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.FAMILY_SUITE.name, rate: ROOM_TYPES.FAMILY_SUITE.rate, status: 'available', guest: null });
         saveRooms();
       }
+      document.getElementById('ciRefId').value = generateRefId();
     }
 
     function saveRooms() { localStorage.setItem('niharika_rooms', JSON.stringify(rooms)); }
@@ -545,7 +559,12 @@
       document.getElementById(tabId).classList.add('active');
       event.target.classList.add('active');
       if (tabId === 'dashboard') renderDashboard();
-      if (tabId === 'operations') populateDropdowns();
+      if (tabId === 'operations') {
+        populateDropdowns();
+        if(!document.getElementById('ciRefId').value) {
+          document.getElementById('ciRefId').value = generateRefId();
+        }
+      }
       if (tabId === 'reports') renderLedger();
     }
 
@@ -562,7 +581,7 @@
           <div class="room-no">Room ${room.number}</div>
           <div class="room-type">${room.type}</div>
           <div class="room-status status-${room.status}">${room.status}</div>
-          ${room.guest ? `<div style="font-size:0.75rem; margin-top:0.25rem; font-weight:600;">${room.guest.name} (${room.guest.adults}A, ${room.guest.children}C)</div>` : ''}
+          ${room.guest ? `<div style="font-size:0.75rem; margin-top:0.25rem; font-weight:600;">${room.guest.name} (${room.guest.refId || ''})</div>` : ''}
         `;
         container.appendChild(div);
       });
@@ -599,8 +618,11 @@
       const room = rooms.find(r => r.number === roomNo);
       if (!room) return;
 
+      const refId = document.getElementById('ciRefId').value || generateRefId();
+
       room.status = 'occupied';
       room.guest = {
+        refId: refId,
         name: document.getElementById('ciGuestName').value,
         phone: document.getElementById('ciGuestPhone').value,
         adults: document.getElementById('ciAdults').value,
@@ -615,8 +637,9 @@
       };
 
       saveRooms();
-      alert(`Room ${roomNo} Successfully Checked In!`);
+      alert(`Room ${roomNo} Successfully Checked In! [Customer Ref ID: ${refId}]`);
       document.getElementById('checkInForm').reset();
+      document.getElementById('ciRefId').value = generateRefId();
       populateDropdowns();
     }
 
@@ -636,6 +659,7 @@
       const netPayable = roomCharges + g.extraServices - g.advancePaid;
 
       currentSettlement = {
+        refId: g.refId || 'N/A',
         roomNo: room.number,
         roomType: room.type,
         guest: g,
@@ -644,6 +668,7 @@
         netPayable: netPayable > 0 ? netPayable : 0
       };
 
+      document.getElementById('billRefId').innerText = currentSettlement.refId;
       document.getElementById('billGuestName').innerText = g.name;
       document.getElementById('billGuestCount').innerText = `${g.adults} Adults, ${g.children} Children`;
       document.getElementById('billStayDuration').innerText = `${diffDays} Day(s)`;
@@ -695,6 +720,7 @@
 
       const record = {
         folioId: folioId,
+        refId: currentSettlement.refId,
         roomNo: currentSettlement.roomNo,
         name: currentSettlement.guest.name,
         adults: currentSettlement.guest.adults,
@@ -723,6 +749,7 @@
 
     function showInvoice(record, settlement) {
       document.getElementById('invNo').innerText = record.folioId;
+      document.getElementById('invRefId').innerText = record.refId;
       document.getElementById('invDate').innerText = record.checkOut;
       document.getElementById('invRoom').innerText = record.roomNo;
       document.getElementById('invGuest').innerText = record.name;
@@ -751,6 +778,7 @@
         tbody.innerHTML += `
           <tr>
             <td><strong>${row.folioId}</strong></td>
+            <td><span style="font-weight:600; color:var(--primary);">${row.refId || 'N/A'}</span></td>
             <td>${row.roomNo}</td>
             <td>${row.name}</td>
             <td>${row.adults}</td>
@@ -767,9 +795,9 @@
 
     function exportLedgerCSV() {
       if(ledger.length === 0) { alert('No ledger data available to export.'); return; }
-      let csv = 'Folio ID,Room,Guest Name,Adults,Children,Phone,Check-In,Check-Out,Amount Paid,Payment Mode\n';
+      let csv = 'Folio ID,Customer Ref ID,Room,Guest Name,Adults,Children,Phone,Check-In,Check-Out,Amount Paid,Payment Mode\n';
       ledger.forEach(r => {
-        csv += `"${r.folioId}","${r.roomNo}","${r.name}","${r.adults}","${r.children}","${r.phone}","${r.checkIn}","${r.checkOut}","${r.netPaid}","${r.method}"\n`;
+        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.adults}","${r.children}","${r.phone}","${r.checkIn}","${r.checkOut}","${r.netPaid}","${r.method}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
