@@ -17,18 +17,16 @@
       --border: #e2e8f0;
       --available: #22c55e;
       --occupied: #ef4444;
-      --maintenance: #f59e0b;
-      --reserved: #6366f1;
+      --dirty: #f59e0b;
+      --cottage-border: #0284c7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Header */
     header { background-color: var(--primary); color: white; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .resort-title h1 { font-size: 1.6rem; letter-spacing: 0.5px; }
     .resort-title p { font-size: 0.85rem; color: #d8f3dc; margin-top: 2px; }
     
-    /* Navigation Bar */
     .nav-tabs { display: flex; background-color: white; border-bottom: 2px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .tab-btn { padding: 1.1rem 1.6rem; border: none; background: none; font-weight: 600; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
@@ -39,22 +37,11 @@
     .tab-content.active { display: block; }
     .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.75rem; margin-bottom: 1.5rem; }
     
-    /* Hero Banner & Gallery */
-    .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 350px; background: #000; }
+    .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 320px; background: #000; }
     .hero-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
     .hero-text { position: absolute; bottom: 2rem; left: 2rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .hero-text h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .hero-text p { font-size: 1.1rem; color: #f1f5f9; }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
-    .gallery-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .gallery-card img { width: 100%; height: 190px; object-fit: cover; transition: transform 0.3s ease; }
-    .gallery-card img:hover { transform: scale(1.03); }
-    .gallery-info { padding: 1rem; }
-    .gallery-info h4 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.25rem; }
-    .gallery-info p { font-size: 0.85rem; color: var(--text-muted); }
-
-    /* Restaurant Menu Styling */
     .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
     .menu-category { border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; background: #fff; }
     .menu-category h4 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; font-size: 1.1rem; }
@@ -64,20 +51,25 @@
     .item-desc { font-size: 0.75rem; color: var(--text-muted); }
     .item-price { font-weight: 700; color: var(--primary-light); }
 
-    /* PMS Components */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    .room-card { padding: 1rem; border-radius: 6px; text-align: center; border: 1px solid var(--border); background-color: white; }
+    
+    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .room-card { padding: 1rem; border-radius: 6px; text-align: center; border: 1px solid var(--border); background-color: white; position: relative; }
     .room-card.available { border-top: 5px solid var(--available); }
     .room-card.occupied { border-top: 5px solid var(--occupied); }
-    .room-card.reserved { border-top: 5px solid var(--reserved); }
-    .room-card.maintenance { border-top: 5px solid var(--maintenance); }
-    .room-no { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.25rem; }
-    .room-type { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; }
+    .room-card.dirty { border-top: 5px solid var(--dirty); background-color: #fffbeb; }
+    .room-card.cottage-type { border-left: 3px solid var(--cottage-border); }
+    
+    .room-no { font-size: 1.15rem; font-weight: bold; margin-bottom: 0.25rem; }
+    .room-type { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
     .room-status { font-size: 0.8rem; font-weight: 600; text-transform: capitalize; }
     .status-available { color: var(--available); }
     .status-occupied { color: var(--occupied); }
+    .status-dirty { color: var(--dirty); }
+
+    .clean-btn { margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; border: none; background: #d97706; color: white; border-radius: 3px; cursor: pointer; }
+    .clean-btn:hover { background: #b45309; }
 
     .form-group { margin-bottom: 1rem; }
     .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
@@ -90,6 +82,9 @@
     .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-dark); }
     .btn-block { width: 100%; }
     
+    .order-list-box { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; max-height: 150px; overflow-y: auto; margin-top: 0.5rem; font-size: 0.85rem; }
+    .order-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; border-bottom: 1px dashed #e2e8f0; }
+
     table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
     th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     th { background-color: #f1f5f9; font-weight: 600; }
@@ -112,10 +107,11 @@
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('resortView')">Resort Overview & Cottages</button>
+    <button class="tab-btn active" onclick="switchTab('resortView')">Resort & Cottages View</button>
     <button class="tab-btn" onclick="switchTab('restaurantMenu')">Dining & Food Menu</button>
-    <button class="tab-btn" onclick="switchTab('dashboard')">Room Inventory Matrix</button>
-    <button class="tab-btn" onclick="switchTab('operations')">Front Desk & Billing Counter</button>
+    <button class="tab-btn" onclick="switchTab('barMenu')">Bar Counter & Lounge</button>
+    <button class="tab-btn" onclick="switchTab('dashboard')">Room & Cottage Inventory</button>
+    <button class="tab-btn" onclick="switchTab('operations')">Front Desk & Billing</button>
     <button class="tab-btn" onclick="switchTab('reports')">Folio Ledger & Reports</button>
   </nav>
 
@@ -126,34 +122,7 @@
         <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
         <div class="hero-text">
           <h2>Welcome to Shree Krishna Resort & Retreat</h2>
-          <p>Serene natural landscapes, luxury cottage accommodations, and local culinary delights in Ayodhya Hills</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Accommodation & Amenities</h3>
-        <div class="gallery-grid">
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="Deluxe Cottage">
-            <div class="gallery-info">
-              <h4>Deluxe Cottage</h4>
-              <p>Private balcony facing lush greenery, climate-controlled AC cottage with premium amenities.</p>
-            </div>
-          </div>
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=600&q=80" alt="Family Suite">
-            <div class="gallery-info">
-              <h4>Eco Family Suite</h4>
-              <p>Spacious two-bedroom interconnected suite tailored for family getaways and vacation comfort.</p>
-            </div>
-          </div>
-          <div class="gallery-card">
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80" alt="Restaurant">
-            <div class="gallery-info">
-              <h4>Govinda Dining Hall</h4>
-              <p>Authentic local Purulia cuisine, traditional Bengali meals, and multi-cuisine restaurant service.</p>
-            </div>
-          </div>
+          <p>40 Main Building Rooms & 10 Premium Independent Cottages surrounded by pristine nature</p>
         </div>
       </div>
     </section>
@@ -161,110 +130,65 @@
     <!-- Dining & Food Menu -->
     <section id="restaurantMenu" class="tab-content">
       <div class="card">
-        <h3>Restaurant Menu & Price List</h3>
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Freshly cooked local farm-fresh specialties and traditional Bengali delicacies.</p>
-        
+        <h3>Govinda Dining Hall - Food Menu</h3>
         <div class="menu-grid">
           <div class="menu-category">
             <h4>Breakfast Specials (07:30 AM - 10:30 AM)</h4>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Luchi with Alur Dom (4 pcs)</div>
-                <div class="item-desc">Puffed bread with spicy baby potato curry</div>
-              </div>
-              <div class="item-price">₹120</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Aloo Paratha with Curd & Pickle (2 pcs)</div>
-                <div class="item-desc">Stuffed wheat bread served with butter</div>
-              </div>
-              <div class="item-price">₹140</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Bread Omelette (2 Eggs)</div>
-                <div class="item-desc">Toasted buttered bread with masala omelette</div>
-              </div>
-              <div class="item-price">₹90</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Masala Tea / Organic Green Tea</div>
-                <div class="item-desc">Freshly brewed with ginger and cardamom</div>
-              </div>
-              <div class="item-price">₹30</div>
-            </div>
+            <div class="menu-item"><div><div class="item-name">Luchi with Alur Dom (4 pcs)</div></div><div class="item-price">₹120</div></div>
+            <div class="menu-item"><div><div class="item-name">Aloo Paratha with Curd & Pickle (2 pcs)</div></div><div class="item-price">₹140</div></div>
+            <div class="menu-item"><div><div class="item-name">Bread Omelette (2 Eggs)</div></div><div class="item-price">₹90</div></div>
+            <div class="menu-item"><div><div class="item-name">Masala Tea / Organic Tea</div></div><div class="item-price">₹30</div></div>
           </div>
-
           <div class="menu-category">
             <h4>Lunch & Dinner Thali Specials</h4>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Special Bengali Veg Thali</div>
-                <div class="item-desc">Rice, Dal, Bhaja, Seasonal Sabzi, Chutney, Papad</div>
-              </div>
-              <div class="item-price">₹220</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Desi Chicken Curry Thali</div>
-                <div class="item-desc">Veg Thali served with Country Chicken Curry (4 pcs)</div>
-              </div>
-              <div class="item-price">₹360</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Khashi / Mutton Thali (Purulia Style)</div>
-                <div class="item-desc">Veg Thali served with rich slow-cooked Mutton (4 pcs)</div>
-              </div>
-              <div class="item-price">₹480</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Katla / Rohu Fish Thali</div>
-                <div class="item-desc">Veg Thali served with fresh dam fish curry (1 pc)</div>
-              </div>
-              <div class="item-price">₹290</div>
-            </div>
+            <div class="menu-item"><div><div class="item-name">Special Bengali Veg Thali</div></div><div class="item-price">₹220</div></div>
+            <div class="menu-item"><div><div class="item-name">Desi Chicken Curry Thali</div></div><div class="item-price">₹360</div></div>
+            <div class="menu-item"><div><div class="item-name">Purulia Mutton Thali (4 pcs)</div></div><div class="item-price">₹480</div></div>
+            <div class="menu-item"><div><div class="item-name">Katla Dam Fish Thali (1 pc)</div></div><div class="item-price">₹290</div></div>
           </div>
-
           <div class="menu-category">
             <h4>Evening Snacks & Starters</h4>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Chicken Pakora (8 pcs)</div>
-                <div class="item-desc">Crispy boneless fried chicken bites</div>
-              </div>
-              <div class="item-price">₹180</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Paneer Pakora (6 pcs)</div>
-                <div class="item-desc">Fresh cottage cheese fritters with mint chutney</div>
-              </div>
-              <div class="item-price">₹150</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Veg Cutlet (2 pcs)</div>
-                <div class="item-desc">Crispy beetroot and potato croquette</div>
-              </div>
-              <div class="item-price">₹90</div>
-            </div>
-            <div class="menu-item">
-              <div>
-                <div class="item-name">Mineral Water Bottle (1 Litre)</div>
-                <div class="item-desc">Packaged drinking water</div>
-              </div>
-              <div class="item-price">₹25</div>
-            </div>
+            <div class="menu-item"><div><div class="item-name">Chicken Pakora (8 pcs)</div></div><div class="item-price">₹180</div></div>
+            <div class="menu-item"><div><div class="item-name">Paneer Pakora (6 pcs)</div></div><div class="item-price">₹150</div></div>
+            <div class="menu-item"><div><div class="item-name">Veg Cutlet (2 pcs)</div></div><div class="item-price">₹90</div></div>
+            <div class="menu-item"><div><div class="item-name">Mineral Water Bottle (1L)</div></div><div class="item-price">₹25</div></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Room Inventory Matrix -->
+    <!-- Bar Counter Menu -->
+    <section id="barMenu" class="tab-content">
+      <div class="card">
+        <h3>Madhushala Bar & Spirits Lounge</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Official resort lounge menu. Off-shop and bar counter service available for in-house residents.</p>
+        <div class="menu-grid">
+          <div class="menu-category">
+            <h4>Whisky & Scotch (Peg / Bottle)</h4>
+            <div class="menu-item"><div><div class="item-name">Royal Challenge (60 ml)</div><div class="item-desc">Premium Grain Whisky</div></div><div class="item-price">₹140</div></div>
+            <div class="menu-item"><div><div class="item-name">Blenders Pride Rare (60 ml)</div><div class="item-desc">Reserve Select</div></div><div class="item-price">₹180</div></div>
+            <div class="menu-item"><div><div class="item-name">100 Pipers 12 Yrs Scotch (60 ml)</div><div class="item-desc">Blended Scotch Whisky</div></div><div class="item-price">₹320</div></div>
+            <div class="menu-item"><div><div class="item-name">Black Dog Triple Gold (60 ml)</div><div class="item-desc">Reserve Blended Scotch</div></div><div class="item-price">₹350</div></div>
+          </div>
+          <div class="menu-category">
+            <h4>Beer & Refreshments (Pint / Can)</h4>
+            <div class="menu-item"><div><div class="item-name">Kingfisher Premium Lager (650 ml)</div><div class="item-desc">Chilled Beer</div></div><div class="item-price">₹220</div></div>
+            <div class="menu-item"><div><div class="item-name">Budweiser Magnum (650 ml)</div><div class="item-desc">Strong Beer</div></div><div class="item-price">₹280</div></div>
+            <div class="menu-item"><div><div class="item-name">Heineken Silver (650 ml)</div><div class="item-desc">Crisp Smooth Draught</div></div><div class="item-price">₹290</div></div>
+            <div class="menu-item"><div><div class="item-name">Corona Extra (330 ml)</div><div class="item-desc">Served with Lime</div></div><div class="item-price">₹310</div></div>
+          </div>
+          <div class="menu-category">
+            <h4>Rum, Vodka & Cocktails</h4>
+            <div class="menu-item"><div><div class="item-name">Old Monk Original Rum (60 ml)</div><div class="item-desc">Legendary Dark Rum</div></div><div class="item-price">₹110</div></div>
+            <div class="menu-item"><div><div class="item-name">Bacardi Superior White Rum (60 ml)</div><div class="item-desc">Classic Cocktail Rum</div></div><div class="item-price">₹160</div></div>
+            <div class="menu-item"><div><div class="item-name">Magic Moments Premium Vodka (60 ml)</div><div class="item-desc">Triple Distilled Vodka</div></div><div class="item-price">₹130</div></div>
+            <div class="menu-item"><div><div class="item-name">Soda Water / Tonic Water / Juice Can</div><div class="item-desc">Mixers & Chasers</div></div><div class="item-price">₹60</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Room & Cottage Inventory Matrix -->
     <section id="dashboard" class="tab-content">
       <div class="grid-4" style="margin-bottom: 1.5rem;">
         <div class="card" style="border-left: 4px solid var(--available); margin:0;">
@@ -275,17 +199,24 @@
           <p style="color:var(--text-muted); font-size:0.8rem;">Occupied Units</p>
           <h3 id="stat-occupied" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
         </div>
-        <div class="card" style="border-left: 4px solid var(--reserved); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Reserved Units</p>
-          <h3 id="stat-reserved" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
+        <div class="card" style="border-left: 4px solid var(--dirty); margin:0;">
+          <p style="color:var(--text-muted); font-size:0.8rem;">Dirty / Cleaning Needed</p>
+          <h3 id="stat-dirty" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
         </div>
-        <div class="card" style="border-left: 4px solid var(--maintenance); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Under Maintenance</p>
-          <h3 id="stat-maintenance" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
+        <div class="card" style="border-left: 4px solid var(--cottage-border); margin:0;">
+          <p style="color:var(--text-muted); font-size:0.8rem;">Total Inventory (Rooms + Cottages)</p>
+          <h3 id="stat-total" style="font-size:1.8rem; margin-top:0.25rem;">50</h3>
         </div>
       </div>
+      
       <div class="card">
-        <h3>Room Availability Matrix (40 Inventory Units)</h3>
+        <h3>Heritage Independent Cottages (C-01 to C-10)</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 0.5rem;">Stand-alone luxury cottages situated in open garden areas.</p>
+        <div class="room-grid" id="cottageMatrixContainer"></div>
+      </div>
+
+      <div class="card">
+        <h3>Main Complex Rooms (40 Units)</h3>
         <div class="room-grid" id="roomMatrixContainer"></div>
       </div>
     </section>
@@ -299,20 +230,20 @@
             <div class="form-row form-group">
               <div>
                 <label>Customer Reference ID</label>
-                <input type="text" id="ciRefId" readonly style="background:#f1f5f9; font-weight:bold; color:var(--primary);">
+                <input type="text" id="ciRefId" style="font-weight:bold; color:var(--primary);">
               </div>
               <div>
-                <label>Select Room</label>
+                <label>Select Room or Cottage</label>
                 <select id="ciRoomSelect" required></select>
               </div>
             </div>
             <div class="form-group">
-              <label>Guest Full Name</label>
-              <input type="text" id="ciGuestName" required placeholder="e.g. Rahul Sharma">
+              <label>Contact Phone (Auto-detects returning guest)</label>
+              <input type="tel" id="ciGuestPhone" required placeholder="10-digit Mobile" oninput="lookupReturningGuest()">
             </div>
             <div class="form-group">
-              <label>Contact Phone Number</label>
-              <input type="tel" id="ciGuestPhone" required placeholder="10-digit Mobile">
+              <label>Guest Full Name</label>
+              <input type="text" id="ciGuestName" required placeholder="e.g. Rahul Sharma">
             </div>
             <div class="form-row form-group">
               <div>
@@ -326,7 +257,7 @@
             </div>
             <div class="form-row form-group">
               <div>
-                <label>ID Document Type</label>
+                <label>ID Type</label>
                 <select id="ciIdType">
                   <option value="Aadhaar Card">Aadhaar Card</option>
                   <option value="Passport">Passport</option>
@@ -367,7 +298,7 @@
           <h3>Guest Check-Out & Settlement</h3>
           <form id="checkOutSearchForm" onsubmit="loadBillingDetails(event)">
             <div class="form-group">
-              <label>Active Occupied Room</label>
+              <label>Active Occupied Room / Cottage</label>
               <select id="coRoomSelect" required></select>
             </div>
             <button type="submit" class="btn btn-secondary btn-block">Calculate Folio Statement</button>
@@ -379,34 +310,50 @@
               <p><strong>Guest:</strong> <span id="billGuestName"></span></p>
               <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
               <p><strong>Duration:</strong> <span id="billStayDuration"></span></p>
-              <p><strong>Room Total:</strong> ₹<span id="billRoomCharges"></span></p>
-              <p><strong>Restaurant / Extra Services:</strong> ₹<span id="billPosCharges">0</span></p>
+              <p><strong>Room / Cottage Rent:</strong> ₹<span id="billRoomCharges"></span></p>
+              <p><strong>Total Food & Bar Charges:</strong> ₹<span id="billPosCharges">0</span></p>
               <p><strong>Advance Credited:</strong> ₹<span id="billAdvancePaid"></span></p>
               <hr style="margin:0.5rem 0;">
               <h4 style="color:var(--primary);">Net Payable Balance: ₹<span id="billNetPayable"></span></h4>
             </div>
 
-            <!-- Quick Add Food Bill -->
+            <!-- Multi-item Food & Bar Bill Addition -->
             <div class="form-group">
-              <label>Add Restaurant / Food Item to Folio</label>
+              <label>Add Food & Bar Items to Folio (Cumulative)</label>
               <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-                <select id="quickFoodSelect" onchange="autoFillFoodPrice()">
-                  <option value="">-- Choose Item from Menu --</option>
-                  <option value="120">Luchi with Alur Dom - ₹120</option>
-                  <option value="140">Aloo Paratha with Curd - ₹140</option>
-                  <option value="90">Bread Omelette - ₹90</option>
-                  <option value="30">Masala Tea - ₹30</option>
-                  <option value="220">Bengali Veg Thali - ₹220</option>
-                  <option value="360">Desi Chicken Curry Thali - ₹360</option>
-                  <option value="480">Mutton Thali (Purulia Style) - ₹480</option>
-                  <option value="290">Katla Fish Thali - ₹290</option>
-                  <option value="180">Chicken Pakora (8 pcs) - ₹180</option>
-                  <option value="150">Paneer Pakora (6 pcs) - ₹150</option>
-                  <option value="90">Veg Cutlet (2 pcs) - ₹90</option>
-                  <option value="25">Mineral Water (1L) - ₹25</option>
+                <select id="quickItemSelect">
+                  <option value="">-- Choose Item from Dining / Bar Menu --</option>
+                  <optgroup label="Breakfast & Snacks">
+                    <option value="Luchi with Alur Dom|120">Luchi with Alur Dom - ₹120</option>
+                    <option value="Aloo Paratha|140">Aloo Paratha with Curd - ₹140</option>
+                    <option value="Bread Omelette|90">Bread Omelette - ₹90</option>
+                    <option value="Chicken Pakora|180">Chicken Pakora - ₹180</option>
+                    <option value="Paneer Pakora|150">Paneer Pakora - ₹150</option>
+                  </optgroup>
+                  <optgroup label="Main Meals & Thalis">
+                    <option value="Bengali Veg Thali|220">Bengali Veg Thali - ₹220</option>
+                    <option value="Desi Chicken Thali|360">Desi Chicken Curry Thali - ₹360</option>
+                    <option value="Mutton Thali|480">Purulia Mutton Thali - ₹480</option>
+                    <option value="Fish Thali|290">Katla Fish Thali - ₹290</option>
+                  </optgroup>
+                  <optgroup label="Bar Lounge & Spirits">
+                    <option value="Royal Challenge (60ml)|140">Royal Challenge Whisky (60ml) - ₹140</option>
+                    <option value="Blenders Pride (60ml)|180">Blenders Pride Rare (60ml) - ₹180</option>
+                    <option value="100 Pipers Scotch (60ml)|320">100 Pipers Scotch (60ml) - ₹320</option>
+                    <option value="Kingfisher Beer (650ml)|220">Kingfisher Premium Beer - ₹220</option>
+                    <option value="Budweiser Magnum (650ml)|280">Budweiser Magnum Beer - ₹280</option>
+                    <option value="Old Monk Rum (60ml)|110">Old Monk Dark Rum (60ml) - ₹110</option>
+                    <option value="Magic Moments Vodka (60ml)|130">Magic Moments Vodka (60ml) - ₹130</option>
+                    <option value="Mineral Water (1L)|25">Mineral Water Bottle (1L) - ₹25</option>
+                  </optgroup>
                 </select>
-                <input type="number" id="extraServiceCharge" placeholder="Amount (₹)" style="max-width:130px;">
-                <button type="button" class="btn btn-outline" onclick="addServiceCharge()">Add to Bill</button>
+                <input type="number" id="quickItemQty" value="1" min="1" style="max-width:70px;" title="Quantity">
+                <button type="button" class="btn btn-outline" onclick="addOrderItem()">Add Item</button>
+              </div>
+
+              <!-- Itemized List -->
+              <div class="order-list-box" id="orderItemsList">
+                <p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>
               </div>
             </div>
 
@@ -427,7 +374,7 @@
               <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">VPA: 9733054199@ybl</p>
             </div>
 
-            <button type="button" class="btn btn-primary btn-block" onclick="processSettlement()">Complete Settlement & Generate Tax Invoice</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="processSettlement()">Complete Settlement & Mark Room Dirty</button>
           </div>
         </div>
       </div>
@@ -446,10 +393,9 @@
               <tr>
                 <th>Folio</th>
                 <th>Ref ID</th>
-                <th>Room</th>
+                <th>Room / Cottage</th>
                 <th>Guest Name</th>
-                <th>Adults</th>
-                <th>Children</th>
+                <th>Headcount</th>
                 <th>Phone</th>
                 <th>Check-In</th>
                 <th>Check-Out</th>
@@ -479,7 +425,7 @@
             <p><strong>Invoice No:</strong> <span id="invNo"></span></p>
             <p><strong>Customer Ref ID:</strong> <span id="invRefId" style="font-weight:bold;"></span></p>
             <p><strong>Date:</strong> <span id="invDate"></span></p>
-            <p><strong>Room No:</strong> <span id="invRoom"></span></p>
+            <p><strong>Unit Assigned:</strong> <span id="invRoom"></span></p>
           </div>
           <div style="text-align:right;">
             <p><strong>Guest:</strong> <span id="invGuest"></span></p>
@@ -514,10 +460,11 @@
 
   <script>
     const ROOM_TYPES = {
-      DELUXE: { name: 'Deluxe Cottage', rate: 2500 },
+      DELUXE: { name: 'Deluxe AC', rate: 2500 },
       SUPER_DELUXE: { name: 'Super Deluxe AC', rate: 3500 },
       FAMILY_SUITE: { name: 'Eco Family Suite', rate: 5000 },
-      STANDARD: { name: 'Standard Non-AC', rate: 1800 }
+      STANDARD: { name: 'Standard Non-AC', rate: 1800 },
+      COTTAGE: { name: 'Heritage Luxury Cottage', rate: 3500 }
     };
 
     let rooms = [];
@@ -529,7 +476,7 @@
     }
 
     function initInventory() {
-      const savedRooms = localStorage.getItem('krishna_rooms');
+      const savedRooms = localStorage.getItem('krishna_rooms_v2');
       const savedLedger = localStorage.getItem('krishna_ledger');
 
       if (savedLedger) ledger = JSON.parse(savedLedger);
@@ -538,16 +485,22 @@
         rooms = JSON.parse(savedRooms);
       } else {
         rooms = [];
-        for (let i = 101; i <= 110; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.STANDARD.name, rate: ROOM_TYPES.STANDARD.rate, status: 'available', guest: null });
-        for (let i = 201; i <= 215; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.DELUXE.name, rate: ROOM_TYPES.DELUXE.rate, status: 'available', guest: null });
-        for (let i = 301; i <= 310; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.SUPER_DELUXE.name, rate: ROOM_TYPES.SUPER_DELUXE.rate, status: 'available', guest: null });
-        for (let i = 401; i <= 405; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.FAMILY_SUITE.name, rate: ROOM_TYPES.FAMILY_SUITE.rate, status: 'available', guest: null });
+        // 10 Independent Cottages
+        for (let c = 1; c <= 10; c++) {
+          const cNo = 'C-' + (c < 10 ? '0' + c : c);
+          rooms.push({ id: 'cot_' + c, number: cNo, type: ROOM_TYPES.COTTAGE.name, rate: ROOM_TYPES.COTTAGE.rate, status: 'available', isCottage: true, guest: null });
+        }
+        // 40 Main Building Rooms
+        for (let i = 101; i <= 110; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.STANDARD.name, rate: ROOM_TYPES.STANDARD.rate, status: 'available', isCottage: false, guest: null });
+        for (let i = 201; i <= 215; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.DELUXE.name, rate: ROOM_TYPES.DELUXE.rate, status: 'available', isCottage: false, guest: null });
+        for (let i = 301; i <= 310; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.SUPER_DELUXE.name, rate: ROOM_TYPES.SUPER_DELUXE.rate, status: 'available', isCottage: false, guest: null });
+        for (let i = 401; i <= 405; i++) rooms.push({ id: i, number: i.toString(), type: ROOM_TYPES.FAMILY_SUITE.name, rate: ROOM_TYPES.FAMILY_SUITE.rate, status: 'available', isCottage: false, guest: null });
         saveRooms();
       }
       document.getElementById('ciRefId').value = generateRefId();
     }
 
-    function saveRooms() { localStorage.setItem('krishna_rooms', JSON.stringify(rooms)); }
+    function saveRooms() { localStorage.setItem('krishna_rooms_v2', JSON.stringify(rooms)); }
     function saveLedger() { localStorage.setItem('krishna_ledger', JSON.stringify(ledger)); }
 
     function switchTab(tabId) {
@@ -565,41 +518,66 @@
       if (tabId === 'reports') renderLedger();
     }
 
+    function markRoomClean(roomNumber) {
+      const room = rooms.find(r => r.number === roomNumber);
+      if (room) {
+        room.status = 'available';
+        saveRooms();
+        renderDashboard();
+        populateDropdowns();
+      }
+    }
+
     function renderDashboard() {
-      const container = document.getElementById('roomMatrixContainer');
-      container.innerHTML = '';
-      let counts = { available: 0, occupied: 0, reserved: 0, maintenance: 0 };
+      const roomContainer = document.getElementById('roomMatrixContainer');
+      const cottageContainer = document.getElementById('cottageMatrixContainer');
+      roomContainer.innerHTML = '';
+      cottageContainer.innerHTML = '';
+
+      let counts = { available: 0, occupied: 0, dirty: 0 };
 
       rooms.forEach(room => {
         counts[room.status]++;
         const div = document.createElement('div');
-        div.className = `room-card ${room.status}`;
+        div.className = `room-card ${room.status} ${room.isCottage ? 'cottage-type' : ''}`;
+        
+        let extraAction = '';
+        if (room.status === 'dirty') {
+          extraAction = `<button class="clean-btn" onclick="markRoomClean('${room.number}')">Mark Clean</button>`;
+        }
+
         div.innerHTML = `
-          <div class="room-no">Room ${room.number}</div>
+          <div class="room-no">${room.number}</div>
           <div class="room-type">${room.type}</div>
-          <div class="room-status status-${room.status}">${room.status}</div>
-          ${room.guest ? `<div style="font-size:0.75rem; margin-top:0.25rem; font-weight:600;">${room.guest.name} (${room.guest.refId || ''})</div>` : ''}
+          <div class="room-status status-${room.status}">${room.status === 'dirty' ? 'Dirty / Clean Needed' : room.status}</div>
+          ${room.guest ? `<div style="font-size:0.72rem; margin-top:0.25rem; font-weight:600;">${room.guest.name}</div>` : ''}
+          ${extraAction}
         `;
-        container.appendChild(div);
+
+        if (room.isCottage) {
+          cottageContainer.appendChild(div);
+        } else {
+          roomContainer.appendChild(div);
+        }
       });
 
       document.getElementById('stat-available').innerText = counts.available;
       document.getElementById('stat-occupied').innerText = counts.occupied;
-      document.getElementById('stat-reserved').innerText = counts.reserved;
-      document.getElementById('stat-maintenance').innerText = counts.maintenance;
+      document.getElementById('stat-dirty').innerText = counts.dirty;
+      document.getElementById('stat-total').innerText = rooms.length;
     }
 
     function populateDropdowns() {
       const ciSelect = document.getElementById('ciRoomSelect');
       const coSelect = document.getElementById('coRoomSelect');
-      ciSelect.innerHTML = '<option value="">-- Choose Vacant Room --</option>';
-      coSelect.innerHTML = '<option value="">-- Choose Occupied Room --</option>';
+      ciSelect.innerHTML = '<option value="">-- Choose Vacant Unit --</option>';
+      coSelect.innerHTML = '<option value="">-- Choose Occupied Unit --</option>';
 
       rooms.forEach(room => {
         if (room.status === 'available') {
-          ciSelect.innerHTML += `<option value="${room.number}">Room ${room.number} - ${room.type} (₹${room.rate})</option>`;
+          ciSelect.innerHTML += `<option value="${room.number}">${room.isCottage ? '[Cottage] ' : '[Room] '}${room.number} - ${room.type} (₹${room.rate})</option>`;
         } else if (room.status === 'occupied') {
-          coSelect.innerHTML += `<option value="${room.number}">Room ${room.number} - ${room.guest ? room.guest.name : 'Occupied'}</option>`;
+          coSelect.innerHTML += `<option value="${room.number}">${room.isCottage ? '[Cottage] ' : '[Room] '}${room.number} - ${room.guest ? room.guest.name : 'Occupied'}</option>`;
         }
       });
     }
@@ -608,6 +586,23 @@
       const room = rooms.find(r => r.number === this.value);
       if (room) document.getElementById('ciRate').value = room.rate;
     });
+
+    function lookupReturningGuest() {
+      const phone = document.getElementById('ciGuestPhone').value.trim();
+      if (phone.length >= 10) {
+        const pastRecord = ledger.slice().reverse().find(entry => entry.phone === phone);
+        if (pastRecord) {
+          document.getElementById('ciRefId').value = pastRecord.refId;
+          if (!document.getElementById('ciGuestName').value) {
+            document.getElementById('ciGuestName').value = pastRecord.name;
+          }
+          return;
+        }
+      }
+      if (!document.getElementById('ciRefId').value) {
+        document.getElementById('ciRefId').value = generateRefId();
+      }
+    }
 
     function handleCheckIn(e) {
       e.preventDefault();
@@ -630,11 +625,11 @@
         checkOutDate: document.getElementById('ciCheckOutDate').value,
         dailyRate: parseFloat(document.getElementById('ciRate').value),
         advancePaid: parseFloat(document.getElementById('ciAdvance').value) || 0,
-        extraServices: 0
+        orderedItems: []
       };
 
       saveRooms();
-      alert(`Room ${roomNo} Successfully Checked In! [Customer Ref ID: ${refId}]`);
+      alert(`Unit ${roomNo} Successfully Checked In! [Customer Ref ID: ${refId}]`);
       document.getElementById('checkInForm').reset();
       document.getElementById('ciRefId').value = generateRefId();
       populateDropdowns();
@@ -647,13 +642,16 @@
       if (!room || !room.guest) return;
 
       const g = room.guest;
+      if (!g.orderedItems) g.orderedItems = [];
+
       const d1 = new Date(g.checkInDate);
       const d2 = new Date();
       let diffDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
       if (diffDays <= 0) diffDays = 1;
 
       const roomCharges = diffDays * g.dailyRate;
-      const netPayable = roomCharges + g.extraServices - g.advancePaid;
+      const itemsTotal = g.orderedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const netPayable = roomCharges + itemsTotal - g.advancePaid;
 
       currentSettlement = {
         refId: g.refId || 'N/A',
@@ -662,6 +660,7 @@
         guest: g,
         days: diffDays,
         roomCharges: roomCharges,
+        itemsTotal: itemsTotal,
         netPayable: netPayable > 0 ? netPayable : 0
       };
 
@@ -670,31 +669,72 @@
       document.getElementById('billGuestCount').innerText = `${g.adults} Adults, ${g.children} Children`;
       document.getElementById('billStayDuration').innerText = `${diffDays} Day(s)`;
       document.getElementById('billRoomCharges').innerText = roomCharges.toFixed(2);
-      document.getElementById('billPosCharges').innerText = g.extraServices.toFixed(2);
       document.getElementById('billAdvancePaid').innerText = g.advancePaid.toFixed(2);
-      document.getElementById('billNetPayable').innerText = currentSettlement.netPayable.toFixed(2);
-
-      updateUpiQr(currentSettlement.netPayable);
+      
+      renderOrderItemsUI();
+      updateBillingCalculations();
       document.getElementById('billingSummary').style.display = 'block';
     }
 
-    function autoFillFoodPrice() {
-      const select = document.getElementById('quickFoodSelect');
-      if (select.value) {
-        document.getElementById('extraServiceCharge').value = select.value;
-      }
+    function addOrderItem() {
+      if (!currentSettlement) return;
+      const select = document.getElementById('quickItemSelect');
+      const qty = parseInt(document.getElementById('quickItemQty').value) || 1;
+      if (!select.value) return;
+
+      const [name, price] = select.value.split('|');
+      currentSettlement.guest.orderedItems.push({
+        name: name,
+        price: parseFloat(price),
+        qty: qty
+      });
+
+      renderOrderItemsUI();
+      updateBillingCalculations();
+      select.value = '';
+      document.getElementById('quickItemQty').value = '1';
     }
 
-    function addServiceCharge() {
-      const amt = parseFloat(document.getElementById('extraServiceCharge').value);
-      if (!amt || !currentSettlement) return;
-      currentSettlement.guest.extraServices += amt;
-      currentSettlement.netPayable += amt;
-      document.getElementById('billPosCharges').innerText = currentSettlement.guest.extraServices.toFixed(2);
+    function removeOrderItem(index) {
+      if (!currentSettlement) return;
+      currentSettlement.guest.orderedItems.splice(index, 1);
+      renderOrderItemsUI();
+      updateBillingCalculations();
+    }
+
+    function renderOrderItemsUI() {
+      const container = document.getElementById('orderItemsList');
+      container.innerHTML = '';
+      const items = currentSettlement.guest.orderedItems;
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>';
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'order-item-row';
+        row.innerHTML = `
+          <span>${item.name} x ${item.qty} (@₹${item.price})</span>
+          <span>
+            <strong>₹${(item.price * item.qty).toFixed(2)}</strong>
+            <button onclick="removeOrderItem(${index})" style="background:none; border:none; color:red; cursor:pointer; margin-left:8px; font-weight:bold;">&times;</button>
+          </span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function updateBillingCalculations() {
+      const itemsTotal = currentSettlement.guest.orderedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      currentSettlement.itemsTotal = itemsTotal;
+      const net = (currentSettlement.roomCharges + itemsTotal) - currentSettlement.guest.advancePaid;
+      currentSettlement.netPayable = net > 0 ? net : 0;
+
+      document.getElementById('billPosCharges').innerText = itemsTotal.toFixed(2);
       document.getElementById('billNetPayable').innerText = currentSettlement.netPayable.toFixed(2);
       updateUpiQr(currentSettlement.netPayable);
-      document.getElementById('extraServiceCharge').value = '';
-      document.getElementById('quickFoodSelect').value = '';
     }
 
     function handlePaymentMethodChange() {
@@ -725,16 +765,18 @@
         phone: currentSettlement.guest.phone,
         checkIn: currentSettlement.guest.checkInDate,
         checkOut: new Date().toISOString().split('T')[0],
-        totalAmount: currentSettlement.roomCharges + currentSettlement.guest.extraServices,
+        totalAmount: currentSettlement.roomCharges + currentSettlement.itemsTotal,
         netPaid: currentSettlement.netPayable,
-        method: method
+        method: method,
+        items: [...currentSettlement.guest.orderedItems]
       };
 
       ledger.push(record);
       saveLedger();
 
+      // Check-out means the room becomes DIRTY instead of directly available
       const room = rooms.find(r => r.number === currentSettlement.roomNo);
-      room.status = 'available';
+      room.status = 'dirty';
       room.guest = null;
       saveRooms();
 
@@ -742,6 +784,7 @@
       document.getElementById('billingSummary').style.display = 'none';
       document.getElementById('checkOutSearchForm').reset();
       populateDropdowns();
+      renderDashboard();
     }
 
     function showInvoice(record, settlement) {
@@ -754,10 +797,13 @@
       document.getElementById('invPax').innerText = `${record.adults} Adults, ${record.children} Children`;
 
       const tbody = document.getElementById('invItems');
-      tbody.innerHTML = `
-        <tr><td>Room Charges (${settlement.days} Nights @ ₹${settlement.guest.dailyRate})</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>
-        ${settlement.guest.extraServices > 0 ? `<tr><td>Restaurant / Food & Extra Services</td><td style="text-align:right;">₹${settlement.guest.extraServices.toFixed(2)}</td></tr>` : ''}
-      `;
+      tbody.innerHTML = `<tr><td>Room / Cottage Charges (${settlement.days} Nights @ ₹${settlement.guest.dailyRate})</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>`;
+      
+      if (record.items && record.items.length > 0) {
+        record.items.forEach(it => {
+          tbody.innerHTML += `<tr><td>${it.name} (Qty: ${it.qty})</td><td style="text-align:right;">₹${(it.price * it.qty).toFixed(2)}</td></tr>`;
+        });
+      }
 
       document.getElementById('invAdv').innerText = settlement.guest.advancePaid.toFixed(2);
       document.getElementById('invNet').innerText = record.netPaid.toFixed(2);
@@ -778,8 +824,7 @@
             <td><span style="font-weight:600; color:var(--primary);">${row.refId || 'N/A'}</span></td>
             <td>${row.roomNo}</td>
             <td>${row.name}</td>
-            <td>${row.adults}</td>
-            <td>${row.children}</td>
+            <td>${row.adults}A, ${row.children}C</td>
             <td>${row.phone}</td>
             <td>${row.checkIn}</td>
             <td>${row.checkOut}</td>
@@ -792,9 +837,9 @@
 
     function exportLedgerCSV() {
       if(ledger.length === 0) { alert('No ledger data available to export.'); return; }
-      let csv = 'Folio ID,Customer Ref ID,Room,Guest Name,Adults,Children,Phone,Check-In,Check-Out,Amount Paid,Payment Mode\n';
+      let csv = 'Folio ID,Customer Ref ID,Unit,Guest Name,Headcount,Phone,Check-In,Check-Out,Amount Paid,Payment Mode\n';
       ledger.forEach(r => {
-        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.adults}","${r.children}","${r.phone}","${r.checkIn}","${r.checkOut}","${r.netPaid}","${r.method}"\n`;
+        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.adults}A ${r.children}C","${r.phone}","${r.checkIn}","${r.checkOut}","${r.netPaid}","${r.method}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
