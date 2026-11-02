@@ -37,14 +37,12 @@
     .tab-content.active { display: block; }
     .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.75rem; margin-bottom: 1.5rem; }
     
-    /* Hero Banner */
     .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 350px; background: #000; }
     .hero-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
     .hero-text { position: absolute; bottom: 2rem; left: 2rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .hero-text h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
     .hero-text p { font-size: 1.1rem; color: #f1f5f9; }
 
-    /* Gallery Grid */
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.25rem; }
     .gallery-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.06); transition: transform 0.2s ease; }
     .gallery-card:hover { transform: translateY(-3px); }
@@ -93,8 +91,8 @@
     .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-dark); }
     .btn-block { width: 100%; }
     
-    .order-list-box { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; max-height: 150px; overflow-y: auto; margin-top: 0.5rem; font-size: 0.85rem; }
-    .order-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; border-bottom: 1px dashed #e2e8f0; }
+    .order-list-box { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; max-height: 180px; overflow-y: auto; margin-top: 0.5rem; font-size: 0.85rem; }
+    .order-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; border-bottom: 1px dashed #e2e8f0; }
 
     .gateway-panel { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; margin-top: 1rem; display: none; }
     .gateway-panel.active { display: block; }
@@ -105,7 +103,7 @@
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal.active { display: flex; }
-    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 650px; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 680px; max-height: 90vh; overflow-y: auto; }
     .invoice { border: 1px solid #000; padding: 1.5rem; font-family: monospace; }
     .invoice-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 1rem; margin-bottom: 1rem; }
     .qr-container { display: flex; flex-direction: column; align-items: center; margin: 1rem 0; padding: 1rem; border: 1px dashed var(--border); border-radius: 6px; }
@@ -372,11 +370,29 @@
           </form>
 
           <div id="billingSummary" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            
+            <!-- Real-time Actual Check-Out Controls -->
+            <div style="background:#eef2ff; padding:1rem; border-radius:6px; margin-bottom:1rem; border:1px solid #c7d2fe;">
+              <h4 style="color:#3730a3; margin-bottom:0.5rem;">Actual Settlement Date & Timing</h4>
+              <div class="form-row">
+                <div>
+                  <label style="font-size:0.8rem;">Actual Check-Out Date</label>
+                  <input type="date" id="coActualDate" onchange="recalculateDurationAndTax()">
+                </div>
+                <div>
+                  <label style="font-size:0.8rem;">Actual Check-Out Time</label>
+                  <input type="time" id="coActualTime" onchange="recalculateDurationAndTax()">
+                </div>
+              </div>
+            </div>
+
             <div style="background:#f8fafc; padding:1.25rem; border-radius:6px; margin-bottom:1rem; font-size:0.9rem; border:1px solid var(--border);">
               <p><strong>Ref ID:</strong> <span id="billRefId" style="font-weight:bold; color:var(--primary);"></span></p>
               <p><strong>Guest Name:</strong> <span id="billGuestName"></span></p>
               <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
-              <p><strong>Duration & Timings:</strong> <span id="billStayDuration"></span></p>
+              <p><strong>Check-In Timestamp:</strong> <span id="billCheckInTimestamp"></span></p>
+              <p><strong>Check-Out Timestamp:</strong> <span id="billCheckOutTimestamp"></span></p>
+              <p><strong>Billable Duration:</strong> <span id="billStayDuration"></span></p>
               <hr style="margin:0.5rem 0;">
               <p><strong>Room / Cottage Charges:</strong> ₹<span id="billRoomCharges">0.00</span></p>
               <p><strong>Food & Spirits Charges:</strong> ₹<span id="billPosCharges">0.00</span></p>
@@ -389,40 +405,57 @@
               <h3 style="color:var(--primary);">Net Payable Balance: ₹<span id="billNetPayable">0.00</span></h3>
             </div>
 
-            <!-- Multi-item Food & Bar Bill Addition -->
+            <!-- Date-wise Multi-item Food & Bar Bill Addition -->
             <div class="form-group">
-              <label>Add Food & Bar Items to Folio (Cumulative)</label>
-              <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-                <select id="quickItemSelect">
-                  <option value="">-- Choose Item from Dining / Bar Menu --</option>
-                  <optgroup label="Breakfast & Snacks">
-                    <option value="Luchi with Alur Dom|120">Luchi with Alur Dom - ₹120</option>
-                    <option value="Aloo Paratha|140">Aloo Paratha with Curd - ₹140</option>
-                    <option value="Bread Omelette|90">Bread Omelette - ₹90</option>
-                    <option value="Chicken Pakora|180">Chicken Pakora - ₹180</option>
-                    <option value="Paneer Pakora|150">Paneer Pakora - ₹150</option>
-                  </optgroup>
-                  <optgroup label="Main Meals & Thalis">
-                    <option value="Bengali Veg Thali|220">Bengali Veg Thali - ₹220</option>
-                    <option value="Desi Chicken Thali|360">Desi Chicken Curry Thali - ₹360</option>
-                    <option value="Mutton Thali|480">Purulia Mutton Thali - ₹480</option>
-                    <option value="Fish Thali|290">Katla Fish Thali - ₹290</option>
-                  </optgroup>
-                  <optgroup label="Bar Lounge & Spirits">
-                    <option value="Royal Challenge (60ml)|140">Royal Challenge Whisky (60ml) - ₹140</option>
-                    <option value="Blenders Pride (60ml)|180">Blenders Pride Rare (60ml) - ₹180</option>
-                    <option value="100 Pipers Scotch (60ml)|320">100 Pipers Scotch (60ml) - ₹320</option>
-                    <option value="Kingfisher Beer (650ml)|220">Kingfisher Premium Beer - ₹220</option>
-                    <option value="Budweiser Magnum (650ml)|280">Budweiser Magnum Beer - ₹280</option>
-                    <option value="Old Monk Rum (60ml)|110">Old Monk Dark Rum (60ml) - ₹110</option>
-                    <option value="Magic Moments Vodka (60ml)|130">Magic Moments Vodka (60ml) - ₹130</option>
-                    <option value="Mineral Water (1L)|25">Mineral Water Bottle (1L) - ₹25</option>
-                  </optgroup>
-                </select>
-                <input type="number" id="quickItemQty" value="1" min="1" style="max-width:70px;" title="Quantity">
-                <button type="button" class="btn btn-outline" onclick="addOrderItem()">Add Item</button>
+              <label>Add Food & Bar Items to Folio (Date-Tracked)</label>
+              <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap:0.5rem; margin-bottom:0.5rem; align-items:end;">
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted);">Select Item</label>
+                  <select id="quickItemSelect">
+                    <option value="">-- Choose Item --</option>
+                    <optgroup label="Breakfast & Snacks">
+                      <option value="Luchi with Alur Dom|120">Luchi with Alur Dom - ₹120</option>
+                      <option value="Aloo Paratha|140">Aloo Paratha with Curd - ₹140</option>
+                      <option value="Bread Omelette|90">Bread Omelette - ₹90</option>
+                      <option value="Chicken Pakora|180">Chicken Pakora - ₹180</option>
+                      <option value="Paneer Pakora|150">Paneer Pakora - ₹150</option>
+                    </optgroup>
+                    <optgroup label="Main Meals & Thalis">
+                      <option value="Bengali Veg Thali|220">Bengali Veg Thali - ₹220</option>
+                      <option value="Desi Chicken Thali|360">Desi Chicken Curry Thali - ₹360</option>
+                      <option value="Mutton Thali|480">Purulia Mutton Thali - ₹480</option>
+                      <option value="Fish Thali|290">Katla Fish Thali - ₹290</option>
+                    </optgroup>
+                    <optgroup label="Bar Lounge & Spirits">
+                      <option value="Royal Challenge (60ml)|140">Royal Challenge Whisky (60ml) - ₹140</option>
+                      <option value="Blenders Pride (60ml)|180">Blenders Pride Rare (60ml) - ₹180</option>
+                      <option value="100 Pipers Scotch (60ml)|320">100 Pipers Scotch (60ml) - ₹320</option>
+                      <option value="Kingfisher Beer (650ml)|220">Kingfisher Premium Beer - ₹220</option>
+                      <option value="Budweiser Magnum (650ml)|280">Budweiser Magnum Beer - ₹280</option>
+                      <option value="Old Monk Rum (60ml)|110">Old Monk Dark Rum (60ml) - ₹110</option>
+                      <option value="Magic Moments Vodka (60ml)|130">Magic Moments Vodka (60ml) - ₹130</option>
+                      <option value="Mineral Water (1L)|25">Mineral Water Bottle (1L) - ₹25</option>
+                    </optgroup>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted);">Order Date</label>
+                  <input type="date" id="orderItemDate">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted);">Time</label>
+                  <input type="time" id="orderItemTime">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted);">Qty</label>
+                  <input type="number" id="quickItemQty" value="1" min="1" title="Quantity">
+                </div>
+                <div>
+                  <button type="button" class="btn btn-outline" style="height:38px;" onclick="addOrderItem()">Add Item</button>
+                </div>
               </div>
 
+              <!-- Date-wise Itemized List -->
               <div class="order-list-box" id="orderItemsList">
                 <p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>
               </div>
@@ -571,7 +604,7 @@
         <table>
           <thead>
             <tr>
-              <th>Particulars (SAC / HSN)</th>
+              <th>Date & Particulars (SAC / HSN)</th>
               <th style="text-align:right;">Amount (₹)</th>
             </tr>
           </thead>
@@ -619,8 +652,8 @@
     }
 
     function initInventory() {
-      const savedRooms = localStorage.getItem('krishna_rooms_v3');
-      const savedLedger = localStorage.getItem('krishna_ledger_v3');
+      const savedRooms = localStorage.getItem('krishna_rooms_v4');
+      const savedLedger = localStorage.getItem('krishna_ledger_v4');
 
       if (savedLedger) ledger = JSON.parse(savedLedger);
 
@@ -641,10 +674,14 @@
         saveRooms();
       }
       document.getElementById('ciRefId').value = generateRefId();
+      
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (document.getElementById('ciCheckInDate')) document.getElementById('ciCheckInDate').value = todayStr;
+      if (document.getElementById('ciCheckOutDate')) document.getElementById('ciCheckOutDate').value = todayStr;
     }
 
-    function saveRooms() { localStorage.setItem('krishna_rooms_v3', JSON.stringify(rooms)); }
-    function saveLedger() { localStorage.setItem('krishna_ledger_v3', JSON.stringify(ledger)); }
+    function saveRooms() { localStorage.setItem('krishna_rooms_v4', JSON.stringify(rooms)); }
+    function saveLedger() { localStorage.setItem('krishna_ledger_v4', JSON.stringify(ledger)); }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -774,7 +811,7 @@
       };
 
       saveRooms();
-      alert(`Unit ${roomNo} Successfully Checked In!\n[Customer Ref ID: ${refId}]\nCheck-In Time: ${room.guest.checkInTime}`);
+      alert(`Unit ${roomNo} Successfully Checked In!\n[Customer Ref ID: ${refId}]\nCheck-In: ${room.guest.checkInDate} at ${room.guest.checkInTime}`);
       document.getElementById('checkInForm').reset();
       document.getElementById('ciRefId').value = generateRefId();
       populateDropdowns();
@@ -789,20 +826,27 @@
       const g = room.guest;
       if (!g.orderedItems) g.orderedItems = [];
 
-      const d1 = new Date(g.checkInDate);
-      const d2 = new Date();
-      let diffDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-      if (diffDays <= 0) diffDays = 1;
+      // Check-out defaults to today's date and current local time
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const timeStr = `${hours}:${mins}`;
 
-      const roomCharges = diffDays * g.dailyRate;
+      document.getElementById('coActualDate').value = todayStr;
+      document.getElementById('coActualTime').value = timeStr;
+
+      // Set order item default date-time to now
+      document.getElementById('orderItemDate').value = todayStr;
+      document.getElementById('orderItemTime').value = timeStr;
 
       currentSettlement = {
         refId: g.refId || 'N/A',
         roomNo: room.number,
         roomType: room.type,
         guest: g,
-        days: diffDays,
-        roomCharges: roomCharges,
+        days: 1,
+        roomCharges: 0,
         itemsTotal: 0,
         subtotal: 0,
         cgst: 0,
@@ -814,23 +858,51 @@
       document.getElementById('billRefId').innerText = currentSettlement.refId;
       document.getElementById('billGuestName').innerText = g.name;
       document.getElementById('billGuestCount').innerText = `${g.adults} Adults, ${g.children} Children`;
-      document.getElementById('billStayDuration').innerText = `${diffDays} Day(s) [In: ${g.checkInDate} ${g.checkInTime || '12:00'} | Out: Today ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`;
-      document.getElementById('billRoomCharges').innerText = roomCharges.toFixed(2);
       document.getElementById('billAdvancePaid').innerText = g.advancePaid.toFixed(2);
-      
+
       renderOrderItemsUI();
-      updateBillingCalculations();
+      recalculateDurationAndTax();
       document.getElementById('billingSummary').style.display = 'block';
+    }
+
+    function recalculateDurationAndTax() {
+      if (!currentSettlement) return;
+      const g = currentSettlement.guest;
+
+      const ciDateStr = g.checkInDate;
+      const ciTimeStr = g.checkInTime || '12:00';
+      const coDateStr = document.getElementById('coActualDate').value || new Date().toISOString().split('T')[0];
+      const coTimeStr = document.getElementById('coActualTime').value || '11:00';
+
+      const d1 = new Date(ciDateStr);
+      const d2 = new Date(coDateStr);
+      let diffDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+      if (diffDays <= 0) diffDays = 1;
+
+      currentSettlement.days = diffDays;
+      currentSettlement.roomCharges = diffDays * g.dailyRate;
+
+      document.getElementById('billCheckInTimestamp').innerText = `${ciDateStr} (${ciTimeStr})`;
+      document.getElementById('billCheckOutTimestamp').innerText = `${coDateStr} (${coTimeStr})`;
+      document.getElementById('billStayDuration').innerText = `${diffDays} Day(s) / Night(s)`;
+      document.getElementById('billRoomCharges').innerText = currentSettlement.roomCharges.toFixed(2);
+
+      updateBillingCalculations();
     }
 
     function addOrderItem() {
       if (!currentSettlement) return;
       const select = document.getElementById('quickItemSelect');
       const qty = parseInt(document.getElementById('quickItemQty').value) || 1;
+      const orderDate = document.getElementById('orderItemDate').value || new Date().toISOString().split('T')[0];
+      const orderTime = document.getElementById('orderItemTime').value || '12:00';
+
       if (!select.value) return;
 
       const [name, price] = select.value.split('|');
       currentSettlement.guest.orderedItems.push({
+        date: orderDate,
+        time: orderTime,
         name: name,
         price: parseFloat(price),
         qty: qty
@@ -863,7 +935,7 @@
         const row = document.createElement('div');
         row.className = 'order-item-row';
         row.innerHTML = `
-          <span>${item.name} x ${item.qty} (@₹${item.price})</span>
+          <span><small style="color:var(--text-muted); font-weight:600;">[${item.date} ${item.time}]</small> <strong>${item.name}</strong> x ${item.qty} (@₹${item.price})</span>
           <span>
             <strong>₹${(item.price * item.qty).toFixed(2)}</strong>
             <button onclick="removeOrderItem(${index})" style="background:none; border:none; color:red; cursor:pointer; margin-left:8px; font-weight:bold;">&times;</button>
@@ -949,8 +1021,8 @@
         paymentDetails = 'Cash Counter';
       }
 
-      const now = new Date();
-      const checkOutTimeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const coDateStr = document.getElementById('coActualDate').value || new Date().toISOString().split('T')[0];
+      const coTimeStr = document.getElementById('coActualTime').value || '11:00';
 
       const record = {
         folioId: folioId,
@@ -961,7 +1033,7 @@
         children: currentSettlement.guest.children,
         phone: currentSettlement.guest.phone,
         checkIn: `${currentSettlement.guest.checkInDate} (${currentSettlement.guest.checkInTime || '12:00 PM'})`,
-        checkOut: `${now.toISOString().split('T')[0]} (${checkOutTimeString})`,
+        checkOut: `${coDateStr} (${coTimeStr})`,
         subtotal: currentSettlement.subtotal,
         gstTotal: currentSettlement.cgst + currentSettlement.sgst,
         cgst: currentSettlement.cgst,
@@ -999,11 +1071,11 @@
       document.getElementById('invPax').innerText = `${record.adults} Adults, ${record.children} Children`;
 
       const tbody = document.getElementById('invItems');
-      tbody.innerHTML = `<tr><td>Room / Cottage Rent (${settlement.days} Nights @ ₹${settlement.guest.dailyRate}) [SAC: 996311]</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>`;
+      tbody.innerHTML = `<tr><td>${record.checkIn.split(' ')[0]} to ${record.checkOut.split(' ')[0]} - Room / Cottage Rent (${settlement.days} Nights @ ₹${settlement.guest.dailyRate}) [SAC: 996311]</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>`;
       
       if (record.items && record.items.length > 0) {
         record.items.forEach(it => {
-          tbody.innerHTML += `<tr><td>${it.name} (Qty: ${it.qty}) [SAC: 996331]</td><td style="text-align:right;">₹${(it.price * it.qty).toFixed(2)}</td></tr>`;
+          tbody.innerHTML += `<tr><td>${it.date} ${it.time} - ${it.name} (Qty: ${it.qty}) [SAC: 996331]</td><td style="text-align:right;">₹${(it.price * it.qty).toFixed(2)}</td></tr>`;
         });
       }
 
