@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Niharika Resort & Retreat - Enterprise PMS</title>
+  <title>Niharika Resort & Retreat - অযোধ্যা পাহাড়, পুরুলিয়া</title>
   <style>
     :root {
-      --primary: #1e3a8a;
-      --primary-light: #3b82f6;
-      --secondary: #0d9488;
+      --primary: #1b4332;
+      --primary-light: #2d6a4f;
+      --accent: #d4a373;
+      --secondary: #087f5b;
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --text-dark: #0f172a;
+      --text-dark: #1f2937;
       --text-muted: #64748b;
       --border: #e2e8f0;
       --available: #22c55e;
@@ -21,14 +22,39 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Top Header */
     header { background-color: var(--primary); color: white; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .nav-tabs { display: flex; background-color: white; border-bottom: 1px solid var(--border); padding: 0 2rem; overflow-x: auto; }
-    .tab-btn { padding: 1rem 1.5rem; border: none; background: none; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
+    .resort-title h1 { font-size: 1.6rem; letter-spacing: 0.5px; }
+    .resort-title p { font-size: 0.85rem; color: #d8f3dc; margin-top: 2px; }
+    
+    /* Navigation Bar */
+    .nav-tabs { display: flex; background-color: white; border-bottom: 2px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    .tab-btn { padding: 1.1rem 1.6rem; border: none; background: none; font-weight: 600; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-btn:hover { color: var(--primary-light); }
+
     .container { padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.75rem; margin-bottom: 1.5rem; }
+    
+    /* Hero & Showcase Gallery */
+    .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 350px; background: #000; }
+    .hero-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
+    .hero-text { position: absolute; bottom: 2rem; left: 2rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .hero-text h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .hero-text p { font-size: 1.1rem; color: #f1f5f9; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .gallery-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .gallery-card img { width: 100%; height: 190px; object-fit: cover; transition: transform 0.3s ease; }
+    .gallery-card img:hover { transform: scale(1.03); }
+    .gallery-info { padding: 1rem; }
+    .gallery-info h4 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.25rem; }
+    .gallery-info p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* PMS Components */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
     .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; margin-top: 1rem; }
@@ -42,8 +68,7 @@
     .room-status { font-size: 0.8rem; font-weight: 600; text-transform: capitalize; }
     .status-available { color: var(--available); }
     .status-occupied { color: var(--occupied); }
-    .status-reserved { color: var(--reserved); }
-    .status-maintenance { color: var(--maintenance); }
+
     .form-group { margin-bottom: 1rem; }
     .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
     label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-dark); }
@@ -54,9 +79,11 @@
     .btn-secondary { background-color: var(--secondary); color: white; }
     .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-dark); }
     .btn-block { width: 100%; }
+    
     table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
     th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     th { background-color: #f1f5f9; font-weight: 600; }
+
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal.active { display: flex; }
     .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 95%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
@@ -67,21 +94,61 @@
 </head>
 <body>
   <header>
-    <div>
-      <h2>Niharika Resort & Retreat</h2>
-      <p style="font-size: 0.85rem; opacity: 0.9;">Enterprise Property Management System (PMS)</p>
+    <div class="resort-title">
+      <h1>Niharika Resort & Retreat</h1>
+      <p>অরণ্য ও পাহাড়ের শান্ত নিরিবিলি পরিবেশ | অযোধ্যা পাহাড়, পুরুলিয়া</p>
     </div>
     <div id="clock" style="font-size: 0.9rem; font-weight: 500;"></div>
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('dashboard')">Overview Matrix</button>
-    <button class="tab-btn" onclick="switchTab('operations')">Front Desk Operations & Billing</button>
-    <button class="tab-btn" onclick="switchTab('reports')">Reports & Management</button>
+    <button class="tab-btn active" onclick="switchTab('resortView')">রিসোর্ট গ্যালারি ও পরিচয়</button>
+    <button class="tab-btn" onclick="switchTab('dashboard')">রুম স্ট্যাটাস ম্যাট্রিক্স (40 Units)</button>
+    <button class="tab-btn" onclick="switchTab('operations')">ফ্রন্ট ডেস্ক ও বিলিং কাউন্টার</button>
+    <button class="tab-btn" onclick="switchTab('reports')">রিপোর্ট ও লেজার খাতা</button>
   </nav>
 
   <div class="container">
-    <section id="dashboard" class="tab-content active">
+    <!-- Resort Showcase & Photos -->
+    <section id="resortView" class="tab-content active">
+      <div class="hero-banner">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
+        <div class="hero-text">
+          <h2>স্বাগতম নিহারিকা রিসোর্ট অ্যান্ড রিট্রিটে</h2>
+          <p>পুরুলিয়ার অযোধ্যা পাহাড়ের কোলে আধুনিক সুযোগ-সুবিধা ও প্রাকৃতিক সান্নিধ্য</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>আমাদের কটেজ ও সুযোগ-সুবিধা</h3>
+        <div class="gallery-grid">
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="Deluxe Cottage">
+            <div class="gallery-info">
+              <h4>ডিলাক্স কটেজ (Deluxe Cottage)</h4>
+              <p>প্রকৃতি ঘেরা নিরিবিলি ব্যালকনি ও আধুনিক এসি কটেজ সুবিধা।</p>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=600&q=80" alt="Family Suite">
+            <div class="gallery-info">
+              <h4>ইকো ফ্যামিলি স্যুট (Family Suite)</h4>
+              <p>পুরো পরিবারের জন্য সুপরিসর লিভিং রুম ও ডাবল বেডরুম।</p>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80" alt="Restaurant">
+            <div class="gallery-info">
+              <h4>রেস্তোরাঁ ও খাদ্য সম্ভার</h4>
+              <p>খাঁটি গ্রাম্য খাবার ও বিশেষ আদিবাসী ঐতিহ্যবাহী পদ পরিবেশন।</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Room Matrix -->
+    <section id="dashboard" class="tab-content">
       <div class="grid-4" style="margin-bottom: 1.5rem;">
         <div class="card" style="border-left: 4px solid var(--available); margin:0;">
           <p style="color:var(--text-muted); font-size:0.8rem;">Available Rooms</p>
@@ -106,6 +173,7 @@
       </div>
     </section>
 
+    <!-- Front Desk Operations -->
     <section id="operations" class="tab-content">
       <div class="grid-2">
         <div class="card">
@@ -225,6 +293,7 @@
       </div>
     </section>
 
+    <!-- Reports & Ledger -->
     <section id="reports" class="tab-content">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -254,6 +323,7 @@
     </section>
   </div>
 
+  <!-- Print Modal -->
   <div id="invoiceModal" class="modal">
     <div class="modal-content">
       <div class="invoice" id="printableInvoice">
@@ -338,9 +408,9 @@
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       event.target.classList.add('active');
-      renderDashboard();
-      populateDropdowns();
-      if(tabId === 'reports') renderLedger();
+      if (tabId === 'dashboard') renderDashboard();
+      if (tabId === 'operations') populateDropdowns();
+      if (tabId === 'reports') renderLedger();
     }
 
     function renderDashboard() {
@@ -411,7 +481,6 @@
       saveRooms();
       alert(`Room ${roomNo} Successfully Checked In!`);
       document.getElementById('checkInForm').reset();
-      renderDashboard();
       populateDropdowns();
     }
 
@@ -505,7 +574,6 @@
       showInvoice(record, currentSettlement);
       document.getElementById('billingSummary').style.display = 'none';
       document.getElementById('checkOutSearchForm').reset();
-      renderDashboard();
       populateDropdowns();
     }
 
@@ -574,7 +642,6 @@
 
     setInterval(updateClock, 1000);
     initInventory();
-    renderDashboard();
     populateDropdowns();
     updateClock();
   </script>
