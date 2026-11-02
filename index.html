@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Niharika Resort & Retreat - অযোধ্যা পাহাড়, পুরুলিয়া</title>
+  <title>Niharika Resort & Retreat - Ayodhya Hills, Purulia</title>
   <style>
     :root {
       --primary: #1b4332;
@@ -23,7 +23,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Top Header */
+    /* Header */
     header { background-color: var(--primary); color: white; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .resort-title h1 { font-size: 1.6rem; letter-spacing: 0.5px; }
     .resort-title p { font-size: 0.85rem; color: #d8f3dc; margin-top: 2px; }
@@ -39,7 +39,7 @@
     .tab-content.active { display: block; }
     .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.75rem; margin-bottom: 1.5rem; }
     
-    /* Hero & Showcase Gallery */
+    /* Hero Banner & Gallery */
     .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 350px; background: #000; }
     .hero-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
     .hero-text { position: absolute; bottom: 2rem; left: 2rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
@@ -53,6 +53,16 @@
     .gallery-info { padding: 1rem; }
     .gallery-info h4 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.25rem; }
     .gallery-info p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Restaurant Menu Styling */
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .menu-category { border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; background: #fff; }
+    .menu-category h4 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; font-size: 1.1rem; }
+    .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed #f1f5f9; }
+    .menu-item:last-child { border-bottom: none; }
+    .item-name { font-weight: 500; font-size: 0.95rem; }
+    .item-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .item-price { font-weight: 700; color: var(--primary-light); }
 
     /* PMS Components */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
@@ -96,74 +106,184 @@
   <header>
     <div class="resort-title">
       <h1>Niharika Resort & Retreat</h1>
-      <p>অরণ্য ও পাহাড়ের শান্ত নিরিবিলি পরিবেশ | অযোধ্যা পাহাড়, পুরুলিয়া</p>
+      <p>Ayodhya Hills, Purulia, West Bengal | Luxury Eco-Stay & Fine Dining</p>
     </div>
     <div id="clock" style="font-size: 0.9rem; font-weight: 500;"></div>
   </header>
 
   <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('resortView')">রিসোর্ট গ্যালারি ও পরিচয়</button>
-    <button class="tab-btn" onclick="switchTab('dashboard')">রুম স্ট্যাটাস ম্যাট্রিক্স (40 Units)</button>
-    <button class="tab-btn" onclick="switchTab('operations')">ফ্রন্ট ডেস্ক ও বিলিং কাউন্টার</button>
-    <button class="tab-btn" onclick="switchTab('reports')">রিপোর্ট ও লেজার খাতা</button>
+    <button class="tab-btn active" onclick="switchTab('resortView')">Resort Overview & Cottages</button>
+    <button class="tab-btn" onclick="switchTab('restaurantMenu')">Dining & Food Menu</button>
+    <button class="tab-btn" onclick="switchTab('dashboard')">Room Inventory Matrix</button>
+    <button class="tab-btn" onclick="switchTab('operations')">Front Desk & Billing Counter</button>
+    <button class="tab-btn" onclick="switchTab('reports')">Folio Ledger & Reports</button>
   </nav>
 
   <div class="container">
-    <!-- Resort Showcase & Photos -->
+    <!-- Resort Overview -->
     <section id="resortView" class="tab-content active">
       <div class="hero-banner">
         <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
         <div class="hero-text">
-          <h2>স্বাগতম নিহারিকা রিসোর্ট অ্যান্ড রিট্রিটে</h2>
-          <p>পুরুলিয়ার অযোধ্যা পাহাড়ের কোলে আধুনিক সুযোগ-সুবিধা ও প্রাকৃতিক সান্নিধ্য</p>
+          <h2>Welcome to Niharika Resort & Retreat</h2>
+          <p>Serene natural landscapes, luxury cottage accommodations, and local culinary delights in Ayodhya Hills</p>
         </div>
       </div>
 
       <div class="card">
-        <h3>আমাদের কটেজ ও সুযোগ-সুবিধা</h3>
+        <h3>Accommodation & Amenities</h3>
         <div class="gallery-grid">
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="Deluxe Cottage">
             <div class="gallery-info">
-              <h4>ডিলাক্স কটেজ (Deluxe Cottage)</h4>
-              <p>প্রকৃতি ঘেরা নিরিবিলি ব্যালকনি ও আধুনিক এসি কটেজ সুবিধা।</p>
+              <h4>Deluxe Cottage</h4>
+              <p>Private balcony facing lush greenery, climate-controlled AC cottage with premium amenities.</p>
             </div>
           </div>
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=600&q=80" alt="Family Suite">
             <div class="gallery-info">
-              <h4>ইকো ফ্যামিলি স্যুট (Family Suite)</h4>
-              <p>পুরো পরিবারের জন্য সুপরিসর লিভিং রুম ও ডাবল বেডরুম।</p>
+              <h4>Eco Family Suite</h4>
+              <p>Spacious two-bedroom interconnected suite tailored for family getaways and vacation comfort.</p>
             </div>
           </div>
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80" alt="Restaurant">
             <div class="gallery-info">
-              <h4>রেস্তোরাঁ ও খাদ্য সম্ভার</h4>
-              <p>খাঁটি গ্রাম্য খাবার ও বিশেষ আদিবাসী ঐতিহ্যবাহী পদ পরিবেশন।</p>
+              <h4>Aranyak Dining Hall</h4>
+              <p>Authentic local Purulia cuisine, traditional Bengali meals, and multi-cuisine restaurant service.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Room Matrix -->
+    <!-- Dining & Food Menu -->
+    <section id="restaurantMenu" class="tab-content">
+      <div class="card">
+        <h3>Restaurant Menu & Price List</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Freshly cooked local farm-fresh specialties and traditional Bengali delicacies.</p>
+        
+        <div class="menu-grid">
+          <!-- Breakfast -->
+          <div class="menu-category">
+            <h4>Breakfast Specials (07:30 AM - 10:30 AM)</h4>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Luchi with Alur Dom (4 pcs)</div>
+                <div class="item-desc">Puffed bread with spicy baby potato curry</div>
+              </div>
+              <div class="item-price">₹120</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Aloo Paratha with Curd & Pickle (2 pcs)</div>
+                <div class="item-desc">Stuffed wheat bread served with butter</div>
+              </div>
+              <div class="item-price">₹140</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Bread Omelette (2 Eggs)</div>
+                <div class="item-desc">Toasted buttered bread with masala omelette</div>
+              </div>
+              <div class="item-price">₹90</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Masala Tea / Organic Green Tea</div>
+                <div class="item-desc">Freshly brewed with ginger and cardamom</div>
+              </div>
+              <div class="item-price">₹30</div>
+            </div>
+          </div>
+
+          <!-- Main Meals -->
+          <div class="menu-category">
+            <h4>Lunch & Dinner Thali Specials</h4>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Special Bengali Veg Thali</div>
+                <div class="item-desc">Rice, Dal, Bhaja, Seasonal Sabzi, Chutney, Papad</div>
+              </div>
+              <div class="item-price">₹220</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Desi Chicken Curry Thali</div>
+                <div class="item-desc">Veg Thali served with Country Chicken Curry (4 pcs)</div>
+              </div>
+              <div class="item-price">₹360</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Khashi / Mutton Thali (Purulia Style)</div>
+                <div class="item-desc">Veg Thali served with rich slow-cooked Mutton (4 pcs)</div>
+              </div>
+              <div class="item-price">₹480</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Katla / Rohu Fish Thali</div>
+                <div class="item-desc">Veg Thali served with fresh dam fish curry (1 pc)</div>
+              </div>
+              <div class="item-price">₹290</div>
+            </div>
+          </div>
+
+          <!-- Evening Snacks -->
+          <div class="menu-category">
+            <h4>Evening Snacks & Starters</h4>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Chicken Pakora (8 pcs)</div>
+                <div class="item-desc">Crispy boneless fried chicken bites</div>
+              </div>
+              <div class="item-price">₹180</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Paneer Pakora (6 pcs)</div>
+                <div class="item-desc">Fresh cottage cheese fritters with mint chutney</div>
+              </div>
+              <div class="item-price">₹150</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Veg Cutlet (2 pcs)</div>
+                <div class="item-desc">Crispy beetroot and potato croquette</div>
+              </div>
+              <div class="item-price">₹90</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <div class="item-name">Mineral Water Bottle (1 Litre)</div>
+                <div class="item-desc">Packaged drinking water</div>
+              </div>
+              <div class="item-price">₹25</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Room Inventory Matrix -->
     <section id="dashboard" class="tab-content">
       <div class="grid-4" style="margin-bottom: 1.5rem;">
         <div class="card" style="border-left: 4px solid var(--available); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Available Rooms</p>
+          <p style="color:var(--text-muted); font-size:0.8rem;">Available Units</p>
           <h3 id="stat-available" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
         </div>
         <div class="card" style="border-left: 4px solid var(--occupied); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Occupied Rooms</p>
+          <p style="color:var(--text-muted); font-size:0.8rem;">Occupied Units</p>
           <h3 id="stat-occupied" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
         </div>
         <div class="card" style="border-left: 4px solid var(--reserved); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Reserved Rooms</p>
+          <p style="color:var(--text-muted); font-size:0.8rem;">Reserved Units</p>
           <h3 id="stat-reserved" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
         </div>
         <div class="card" style="border-left: 4px solid var(--maintenance); margin:0;">
-          <p style="color:var(--text-muted); font-size:0.8rem;">Maintenance / Hold</p>
+          <p style="color:var(--text-muted); font-size:0.8rem;">Under Maintenance</p>
           <h3 id="stat-maintenance" style="font-size:1.8rem; margin-top:0.25rem;">0</h3>
         </div>
       </div>
@@ -188,22 +308,22 @@
               <input type="text" id="ciGuestName" required placeholder="e.g. Rahul Sharma">
             </div>
             <div class="form-group">
-              <label>Phone Number</label>
+              <label>Contact Phone Number</label>
               <input type="tel" id="ciGuestPhone" required placeholder="10-digit Mobile">
             </div>
             <div class="form-row form-group">
               <div>
-                <label>Adults (ব্যক্তি সংখ্যা)</label>
+                <label>Adults</label>
                 <input type="number" id="ciAdults" min="1" max="10" value="1" required>
               </div>
               <div>
-                <label>Children (শিশু সংখ্যা)</label>
+                <label>Children</label>
                 <input type="number" id="ciChildren" min="0" max="10" value="0" required>
               </div>
             </div>
             <div class="form-row form-group">
               <div>
-                <label>ID Type</label>
+                <label>ID Document Type</label>
                 <select id="ciIdType">
                   <option value="Aadhaar Card">Aadhaar Card</option>
                   <option value="Passport">Passport</option>
@@ -212,8 +332,8 @@
                 </select>
               </div>
               <div>
-                <label>ID Number</label>
-                <input type="text" id="ciIdNumber" required placeholder="Identification Number">
+                <label>ID Document Number</label>
+                <input type="text" id="ciIdNumber" required placeholder="Document Number">
               </div>
             </div>
             <div class="form-row form-group">
@@ -232,11 +352,11 @@
                 <input type="number" id="ciRate" min="0" required>
               </div>
               <div>
-                <label>Advance Paid (₹)</label>
+                <label>Advance Payment (₹)</label>
                 <input type="number" id="ciAdvance" min="0" value="0">
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Confirm Check-In</button>
+            <button type="submit" class="btn btn-primary btn-block">Confirm Guest Check-In</button>
           </form>
         </div>
 
@@ -256,28 +376,44 @@
               <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
               <p><strong>Duration:</strong> <span id="billStayDuration"></span></p>
               <p><strong>Room Total:</strong> ₹<span id="billRoomCharges"></span></p>
-              <p><strong>Room Service:</strong> ₹<span id="billPosCharges">0</span></p>
+              <p><strong>Restaurant / Extra Services:</strong> ₹<span id="billPosCharges">0</span></p>
               <p><strong>Advance Credited:</strong> ₹<span id="billAdvancePaid"></span></p>
               <hr style="margin:0.5rem 0;">
-              <h4 style="color:var(--primary);">Net Payable: ₹<span id="billNetPayable"></span></h4>
+              <h4 style="color:var(--primary);">Net Payable Balance: ₹<span id="billNetPayable"></span></h4>
             </div>
 
+            <!-- Quick Add Food Bill -->
             <div class="form-group">
-              <label>Add Service / Food Charge (₹)</label>
-              <div style="display:flex; gap:0.5rem;">
-                <input type="number" id="extraServiceCharge" placeholder="Amount">
-                <button type="button" class="btn btn-outline" onclick="addServiceCharge()">Add</button>
+              <label>Add Restaurant / Food Item to Folio</label>
+              <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+                <select id="quickFoodSelect" onchange="autoFillFoodPrice()">
+                  <option value="">-- Choose Item from Menu --</option>
+                  <option value="120">Luchi with Alur Dom - ₹120</option>
+                  <option value="140">Aloo Paratha with Curd - ₹140</option>
+                  <option value="90">Bread Omelette - ₹90</option>
+                  <option value="30">Masala Tea - ₹30</option>
+                  <option value="220">Bengali Veg Thali - ₹220</option>
+                  <option value="360">Desi Chicken Curry Thali - ₹360</option>
+                  <option value="480">Mutton Thali (Purulia Style) - ₹480</option>
+                  <option value="290">Katla Fish Thali - ₹290</option>
+                  <option value="180">Chicken Pakora (8 pcs) - ₹180</option>
+                  <option value="150">Paneer Pakora (6 pcs) - ₹150</option>
+                  <option value="90">Veg Cutlet (2 pcs) - ₹90</option>
+                  <option value="25">Mineral Water (1L) - ₹25</option>
+                </select>
+                <input type="number" id="extraServiceCharge" placeholder="Amount (₹)" style="max-width:130px;">
+                <button type="button" class="btn btn-outline" onclick="addServiceCharge()">Add to Bill</button>
               </div>
             </div>
 
             <div class="form-group">
-              <label>Settlement Method (পেমেন্ট পদ্ধতি)</label>
+              <label>Settlement Method</label>
               <select id="paymentMethod" onchange="handlePaymentMethodChange()">
                 <option value="UPI QR">Unified Payments Interface (Dynamic UPI QR)</option>
                 <option value="Cash">Cash Counter</option>
                 <option value="Debit Card">Debit Card</option>
                 <option value="Credit Card">Credit Card</option>
-                <option value="Digital Wallet">Digital Wallet (PhonePe / Paytm)</option>
+                <option value="Digital Wallet">Digital Wallet (PhonePe / Paytm / GPay)</option>
               </select>
             </div>
 
@@ -287,13 +423,13 @@
               <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">VPA: 9733054199@ybl</p>
             </div>
 
-            <button type="button" class="btn btn-primary btn-block" onclick="processSettlement()">Complete Check-Out & Print Invoice</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="processSettlement()">Complete Settlement & Generate Tax Invoice</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Reports & Ledger -->
+    <!-- Folio Ledger & Reports -->
     <section id="reports" class="tab-content">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -329,7 +465,7 @@
       <div class="invoice" id="printableInvoice">
         <div class="invoice-header">
           <h3>NIHARIKA RESORT & RETREAT</h3>
-          <p>Purulia, West Bengal | Ph: +91 9733054199</p>
+          <p>Ayodhya Hills, Purulia, West Bengal | Ph: +91 9733054199</p>
           <p>GSTIN: 19ABCDE1234F1Z5</p>
           <h4>TAX INVOICE / GUEST FOLIO</h4>
         </div>
@@ -360,7 +496,7 @@
           <p>Settlement Mode: <span id="invMethod"></span></p>
         </div>
         <div style="margin-top:2rem; text-align:center; font-size:0.8rem; border-top:1px dashed #000; padding-top:0.5rem;">
-          <p>Thank you for staying at Niharika Resort & Retreat!</p>
+          <p>Thank you for choosing Niharika Resort & Retreat!</p>
         </div>
       </div>
       <div style="margin-top:1.5rem; display:flex; gap:1rem;">
@@ -520,6 +656,13 @@
       document.getElementById('billingSummary').style.display = 'block';
     }
 
+    function autoFillFoodPrice() {
+      const select = document.getElementById('quickFoodSelect');
+      if (select.value) {
+        document.getElementById('extraServiceCharge').value = select.value;
+      }
+    }
+
     function addServiceCharge() {
       const amt = parseFloat(document.getElementById('extraServiceCharge').value);
       if (!amt || !currentSettlement) return;
@@ -529,6 +672,7 @@
       document.getElementById('billNetPayable').innerText = currentSettlement.netPayable.toFixed(2);
       updateUpiQr(currentSettlement.netPayable);
       document.getElementById('extraServiceCharge').value = '';
+      document.getElementById('quickFoodSelect').value = '';
     }
 
     function handlePaymentMethodChange() {
@@ -588,7 +732,7 @@
       const tbody = document.getElementById('invItems');
       tbody.innerHTML = `
         <tr><td>Room Charges (${settlement.days} Nights @ ₹${settlement.guest.dailyRate})</td><td style="text-align:right;">₹${settlement.roomCharges.toFixed(2)}</td></tr>
-        ${settlement.guest.extraServices > 0 ? `<tr><td>Additional Services / Restaurant</td><td style="text-align:right;">₹${settlement.guest.extraServices.toFixed(2)}</td></tr>` : ''}
+        ${settlement.guest.extraServices > 0 ? `<tr><td>Restaurant / Food & Extra Services</td><td style="text-align:right;">₹${settlement.guest.extraServices.toFixed(2)}</td></tr>` : ''}
       `;
 
       document.getElementById('invAdv').innerText = settlement.guest.advancePaid.toFixed(2);
