@@ -102,7 +102,10 @@
     .gateway-panel { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; margin-top: 1rem; display: none; }
     .gateway-panel.active { display: block; }
 
-    /* Night Audit Panels */
+    /* Form C & Split Folio Styles */
+    .form-c-box { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 1rem; margin-top: 0.75rem; display: none; }
+    .split-folio-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 1rem; margin-top: 1rem; display: none; }
+
     .audit-stat-card { background: white; border: 1px solid #c7d2fe; border-left: 5px solid var(--audit-theme); padding: 1.25rem; border-radius: 6px; }
     .audit-stat-card h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
     .audit-stat-card .val { font-size: 1.6rem; font-weight: bold; color: var(--text-dark); }
@@ -321,9 +324,18 @@
                 <input type="number" id="ciChildren" min="0" max="10" value="0" required>
               </div>
             </div>
+
+            <!-- Nationality / Form C Selector -->
             <div class="form-row form-group">
               <div>
-                <label>ID Type</label>
+                <label>Nationality</label>
+                <select id="ciNationality" onchange="handleNationalityChange()">
+                  <option value="Indian">Indian Resident</option>
+                  <option value="Foreigner">Foreign National (Requires Form C)</option>
+                </select>
+              </div>
+              <div>
+                <label>ID Document Type</label>
                 <select id="ciIdType">
                   <option value="Aadhaar Card">Aadhaar Card</option>
                   <option value="Passport">Passport</option>
@@ -331,11 +343,48 @@
                   <option value="Driving License">Driving License</option>
                 </select>
               </div>
-              <div>
-                <label>ID Document Number</label>
-                <input type="text" id="ciIdNumber" required placeholder="Document Number">
+            </div>
+
+            <div class="form-group">
+              <label>ID Document Number</label>
+              <input type="text" id="ciIdNumber" required placeholder="Document Number">
+            </div>
+
+            <!-- Form C Details (FRRO / Bureau of Immigration) -->
+            <div id="formCBox" class="form-c-box">
+              <h4 style="color:#c2410c; margin-bottom:0.5rem; font-size:0.95rem;">Mandatory Form C Details (FRRO Compliance)</h4>
+              <div class="form-row form-group">
+                <div>
+                  <label style="font-size:0.8rem;">Passport Expiry</label>
+                  <input type="date" id="fcPassExp">
+                </div>
+                <div>
+                  <label style="font-size:0.8rem;">Country of Origin</label>
+                  <input type="text" id="fcCountry" placeholder="e.g. United Kingdom">
+                </div>
+              </div>
+              <div class="form-row form-group">
+                <div>
+                  <label style="font-size:0.8rem;">Visa Number</label>
+                  <input type="text" id="fcVisaNo" placeholder="Visa Number">
+                </div>
+                <div>
+                  <label style="font-size:0.8rem;">Visa Type / Valid Till</label>
+                  <input type="date" id="fcVisaExp">
+                </div>
+              </div>
+              <div class="form-row form-group">
+                <div>
+                  <label style="font-size:0.8rem;">Port of Arrival (India)</label>
+                  <input type="text" id="fcPort" placeholder="e.g. Kolkata Airport">
+                </div>
+                <div>
+                  <label style="font-size:0.8rem;">Next Destination</label>
+                  <input type="text" id="fcNextDest" placeholder="e.g. Varanasi / Kolkata">
+                </div>
               </div>
             </div>
+
             <div class="form-row form-group">
               <div>
                 <label>Check-In Date</label>
@@ -382,7 +431,6 @@
 
           <div id="billingSummary" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
             
-            <!-- Real-time Actual Check-Out Controls -->
             <div style="background:#eef2ff; padding:1rem; border-radius:6px; margin-bottom:1rem; border:1px solid #c7d2fe;">
               <h4 style="color:#3730a3; margin-bottom:0.5rem;">Actual Settlement Date & Timing</h4>
               <div class="form-row">
@@ -399,7 +447,7 @@
 
             <div style="background:#f8fafc; padding:1.25rem; border-radius:6px; margin-bottom:1rem; font-size:0.9rem; border:1px solid var(--border);">
               <p><strong>Ref ID:</strong> <span id="billRefId" style="font-weight:bold; color:var(--primary);"></span></p>
-              <p><strong>Guest Name:</strong> <span id="billGuestName"></span></p>
+              <p><strong>Guest Name:</strong> <span id="billGuestName"></span> (<span id="billGuestNat" style="font-weight:600;"></span>)</p>
               <p><strong>Headcount:</strong> <span id="billGuestCount"></span></p>
               <p><strong>Check-In Timestamp:</strong> <span id="billCheckInTimestamp"></span></p>
               <p><strong>Check-Out Timestamp:</strong> <span id="billCheckOutTimestamp"></span></p>
@@ -466,14 +514,53 @@
                 </div>
               </div>
 
-              <!-- Date-wise Itemized List -->
               <div class="order-list-box" id="orderItemsList">
                 <p style="color:var(--text-muted); font-size:0.8rem;">No additional items added yet.</p>
               </div>
             </div>
 
-            <!-- Payment Gateway Selector -->
-            <div class="form-group" style="margin-top: 1.5rem;">
+            <!-- SPLIT FOLIO (SEPARATE BILLING) TOGGLE -->
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:0.75rem; margin-top:1.25rem;">
+              <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; font-weight:bold; color:#166534; margin:0;">
+                <input type="checkbox" id="splitFolioCheck" onchange="toggleSplitFolioUI()">
+                Enable Split Folio (Separate Room Rent & Food/Bar Bill or Split Payment)
+              </label>
+
+              <div id="splitFolioPanel" class="split-folio-box">
+                <div class="form-row form-group">
+                  <div>
+                    <label style="font-size:0.8rem;">Split Method</label>
+                    <select id="splitMode" onchange="calculateSplitAmounts()">
+                      <option value="by_department">Split by Category (Folio A: Room / Folio B: Food & Bar)</option>
+                      <option value="fifty_fifty">Split 50% - 50% Equally Between Two Guests</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="grid-2" style="background:#fff; padding:0.75rem; border-radius:4px; border:1px solid #e2e8f0;">
+                  <div>
+                    <h5 style="color:var(--primary);">Folio A (Part 1)</h5>
+                    <p style="font-size:0.85rem;">Payable: <strong>₹<span id="splitFolioA">0.00</span></strong></p>
+                    <select id="splitFolioAMode" style="margin-top:0.35rem; font-size:0.8rem;">
+                      <option value="Card">Debit / Credit Card</option>
+                      <option value="UPI QR">UPI QR</option>
+                      <option value="Cash">Cash</option>
+                    </select>
+                  </div>
+                  <div>
+                    <h5 style="color:var(--secondary);">Folio B (Part 2)</h5>
+                    <p style="font-size:0.85rem;">Payable: <strong>₹<span id="splitFolioB">0.00</span></strong></p>
+                    <select id="splitFolioBMode" style="margin-top:0.35rem; font-size:0.8rem;">
+                      <option value="UPI QR">UPI QR</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Digital Wallet">Digital Wallet</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Single Payment Gateway Selector (Active when Split is unchecked) -->
+            <div id="standardPaymentBox" class="form-group" style="margin-top: 1.5rem;">
               <label>Select Payment Settlement Gateway</label>
               <select id="paymentMethod" onchange="handlePaymentMethodChange()">
                 <option value="UPI QR">Unified Payments Interface (UPI QR Code)</option>
@@ -514,7 +601,6 @@
                   <input type="password" id="cardCvv" maxlength="3" placeholder="•••">
                 </div>
               </div>
-              <p style="font-size:0.75rem; color:var(--text-muted);">Encrypted 256-bit SSL Payment Gateway Terminal</p>
             </div>
 
             <!-- Digital Wallet Gateway Panel -->
@@ -533,7 +619,6 @@
                 <label>Registered Wallet Mobile Number</label>
                 <input type="tel" id="walletMobile" placeholder="10-digit mobile number linked to wallet">
               </div>
-              <p style="font-size:0.75rem; color:var(--text-muted);">A one-time OTP confirmation link will be triggered to this number.</p>
             </div>
 
             <!-- Cash Counter Panel -->
@@ -635,13 +720,14 @@
                 <th>Ref ID</th>
                 <th>Unit</th>
                 <th>Guest Name</th>
+                <th>Nat.</th>
                 <th>Headcount</th>
                 <th>Check-In</th>
                 <th>Check-Out</th>
                 <th>Subtotal</th>
                 <th>GST (12%)</th>
                 <th>Net Paid</th>
-                <th>Payment Gateway</th>
+                <th>Payment Mode</th>
               </tr>
             </thead>
             <tbody id="ledgerTableBody"></tbody>
@@ -651,7 +737,7 @@
     </section>
   </div>
 
-  <!-- Print Modal -->
+  <!-- Print Modal for Tax Invoice -->
   <div id="invoiceModal" class="modal">
     <div class="modal-content">
       <div class="invoice" id="printableInvoice">
@@ -695,7 +781,7 @@
           <p>Gross Amount with GST: ₹<span id="invGross">0.00</span></p>
           <p>Advance Payment Adjusted: -₹<span id="invAdv">0.00</span></p>
           <h4 style="margin-top:0.4rem; font-size:1.05rem;">Net Settled Amount: ₹<span id="invNet">0.00</span></h4>
-          <p><strong>Payment Gateway / Mode:</strong> <span id="invMethod"></span></p>
+          <p><strong>Payment Mode / Gateway:</strong> <span id="invMethod"></span></p>
         </div>
 
         <div style="margin-top:1.5rem; text-align:center; font-size:0.8rem; border-top:1px dashed #000; padding-top:0.5rem;">
@@ -707,6 +793,38 @@
       <div style="margin-top:1.5rem; display:flex; gap:1rem;">
         <button class="btn btn-primary btn-block" onclick="window.print()">Print Receipt</button>
         <button class="btn btn-outline btn-block" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Form C Registration (BoI / FRRO) -->
+  <div id="formCModal" class="modal">
+    <div class="modal-content">
+      <div class="invoice" style="border: 2px solid #c2410c;">
+        <div class="invoice-header">
+          <h3>BUREAU OF IMMIGRATION / GOVT OF INDIA</h3>
+          <p>FORM C (RULE 14 OF REGISTRATION OF FOREIGNERS RULES, 1992)</p>
+          <h4>HOTEL ARRIVAL REPORT OF FOREIGN NATIONAL</h4>
+          <p style="font-size:0.8rem;">Shree Krishna Resort & Retreat, Purulia, West Bengal</p>
+        </div>
+        <div style="font-size:0.85rem; line-height: 1.6;">
+          <p><strong>Reference ID:</strong> <span id="fcModalRef"></span></p>
+          <p><strong>Name of Guest:</strong> <span id="fcModalName"></span></p>
+          <p><strong>Nationality:</strong> <span id="fcModalCountry"></span></p>
+          <p><strong>Passport Number:</strong> <span id="fcModalPass"></span> (Valid till: <span id="fcModalPassExp"></span>)</p>
+          <p><strong>Visa Number:</strong> <span id="fcModalVisa"></span> (Valid till: <span id="fcModalVisaExp"></span>)</p>
+          <p><strong>Port of Arrival into India:</strong> <span id="fcModalPort"></span></p>
+          <p><strong>Date & Time of Arrival at Hotel:</strong> <span id="fcModalArr"></span></p>
+          <p><strong>Intended Next Destination:</strong> <span id="fcModalNext"></span></p>
+          <p><strong>Local Contact / Mobile:</strong> <span id="fcModalContact"></span></p>
+        </div>
+        <div style="margin-top:1.5rem; border-top:1px dashed #000; padding-top:0.5rem; font-size:0.75rem; text-align:center;">
+          <p>Duly submitted within 24 hours of arrival to the FRRO/FRO Purulia Sadar jurisdiction.</p>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem; display:flex; gap:1rem;">
+        <button class="btn btn-primary btn-block" onclick="window.print()">Print Form C Record</button>
+        <button class="btn btn-outline btn-block" onclick="document.getElementById('formCModal').classList.remove('active')">Close</button>
       </div>
     </div>
   </div>
@@ -730,9 +848,9 @@
     }
 
     function initInventory() {
-      const savedRooms = localStorage.getItem('krishna_rooms_v5');
-      const savedLedger = localStorage.getItem('krishna_ledger_v5');
-      const savedAudit = localStorage.getItem('krishna_audit_v5');
+      const savedRooms = localStorage.getItem('krishna_rooms_v6');
+      const savedLedger = localStorage.getItem('krishna_ledger_v6');
+      const savedAudit = localStorage.getItem('krishna_audit_v6');
 
       if (savedLedger) ledger = JSON.parse(savedLedger);
       if (savedAudit) lastAuditReport = JSON.parse(savedAudit);
@@ -760,9 +878,9 @@
       if (document.getElementById('ciCheckOutDate')) document.getElementById('ciCheckOutDate').value = todayStr;
     }
 
-    function saveRooms() { localStorage.setItem('krishna_rooms_v5', JSON.stringify(rooms)); }
-    function saveLedger() { localStorage.setItem('krishna_ledger_v5', JSON.stringify(ledger)); }
-    function saveAudit() { localStorage.setItem('krishna_audit_v5', JSON.stringify(lastAuditReport)); }
+    function saveRooms() { localStorage.setItem('krishna_rooms_v6', JSON.stringify(rooms)); }
+    function saveLedger() { localStorage.setItem('krishna_ledger_v6', JSON.stringify(ledger)); }
+    function saveAudit() { localStorage.setItem('krishna_audit_v6', JSON.stringify(lastAuditReport)); }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -790,6 +908,19 @@
       }
     }
 
+    function handleNationalityChange() {
+      const nat = document.getElementById('ciNationality').value;
+      const formC = document.getElementById('formCBox');
+      const idType = document.getElementById('ciIdType');
+      if (nat === 'Foreigner') {
+        formC.style.display = 'block';
+        idType.value = 'Passport';
+      } else {
+        formC.style.display = 'none';
+        idType.value = 'Aadhaar Card';
+      }
+    }
+
     function renderDashboard() {
       const roomContainer = document.getElementById('roomMatrixContainer');
       const cottageContainer = document.getElementById('cottageMatrixContainer');
@@ -812,7 +943,7 @@
           <div class="room-no">${room.number}</div>
           <div class="room-type">${room.type}</div>
           <div class="room-status status-${room.status}">${room.status === 'dirty' ? 'Dirty / Clean Needed' : room.status}</div>
-          ${room.guest ? `<div style="font-size:0.72rem; margin-top:0.25rem; font-weight:600;">${room.guest.name}</div>` : ''}
+          ${room.guest ? `<div style="font-size:0.72rem; margin-top:0.25rem; font-weight:600;">${room.guest.name} ${room.guest.nationality === 'Foreigner' ? '🌐' : ''}</div>` : ''}
           ${extraAction}
         `;
 
@@ -873,12 +1004,27 @@
       if (!room) return;
 
       const refId = document.getElementById('ciRefId').value || generateRefId();
+      const nat = document.getElementById('ciNationality').value;
+
+      let formCData = null;
+      if (nat === 'Foreigner') {
+        formCData = {
+          passExp: document.getElementById('fcPassExp').value,
+          country: document.getElementById('fcCountry').value || 'Foreign National',
+          visaNo: document.getElementById('fcVisaNo').value,
+          visaExp: document.getElementById('fcVisaExp').value,
+          port: document.getElementById('fcPort').value,
+          nextDest: document.getElementById('fcNextDest').value
+        };
+      }
 
       room.status = 'occupied';
       room.guest = {
         refId: refId,
         name: document.getElementById('ciGuestName').value,
         phone: document.getElementById('ciGuestPhone').value,
+        nationality: nat,
+        formC: formCData,
         adults: document.getElementById('ciAdults').value,
         children: document.getElementById('ciChildren').value,
         idType: document.getElementById('ciIdType').value,
@@ -893,10 +1039,32 @@
       };
 
       saveRooms();
-      alert(`Unit ${roomNo} Successfully Checked In!\n[Customer Ref ID: ${refId}]\nCheck-In: ${room.guest.checkInDate} at ${room.guest.checkInTime}`);
+
+      if (nat === 'Foreigner') {
+        openFormCModal(room.guest);
+      } else {
+        alert(`Unit ${roomNo} Successfully Checked In!\n[Customer Ref ID: ${refId}]\nCheck-In: ${room.guest.checkInDate} at ${room.guest.checkInTime}`);
+      }
+
       document.getElementById('checkInForm').reset();
       document.getElementById('ciRefId').value = generateRefId();
+      document.getElementById('formCBox').style.display = 'none';
       populateDropdowns();
+    }
+
+    function openFormCModal(guest) {
+      document.getElementById('fcModalRef').innerText = guest.refId;
+      document.getElementById('fcModalName').innerText = guest.name;
+      document.getElementById('fcModalCountry').innerText = guest.formC.country;
+      document.getElementById('fcModalPass').innerText = guest.idNumber;
+      document.getElementById('fcModalPassExp').innerText = guest.formC.passExp || 'N/A';
+      document.getElementById('fcModalVisa').innerText = guest.formC.visaNo || 'N/A';
+      document.getElementById('fcModalVisaExp').innerText = guest.formC.visaExp || 'N/A';
+      document.getElementById('fcModalPort').innerText = guest.formC.port || 'Kolkata Airport';
+      document.getElementById('fcModalArr').innerText = `${guest.checkInDate} ${guest.checkInTime}`;
+      document.getElementById('fcModalNext').innerText = guest.formC.nextDest || 'N/A';
+      document.getElementById('fcModalContact').innerText = guest.phone;
+      document.getElementById('formCModal').classList.add('active');
     }
 
     function loadBillingDetails(e) {
@@ -916,7 +1084,6 @@
 
       document.getElementById('coActualDate').value = todayStr;
       document.getElementById('coActualTime').value = timeStr;
-
       document.getElementById('orderItemDate').value = todayStr;
       document.getElementById('orderItemTime').value = timeStr;
 
@@ -937,6 +1104,7 @@
 
       document.getElementById('billRefId').innerText = currentSettlement.refId;
       document.getElementById('billGuestName').innerText = g.name;
+      document.getElementById('billGuestNat').innerText = g.nationality || 'Indian';
       document.getElementById('billGuestCount').innerText = `${g.adults} Adults, ${g.children} Children`;
       document.getElementById('billAdvancePaid').innerText = g.advancePaid.toFixed(2);
 
@@ -1025,6 +1193,40 @@
       });
     }
 
+    function toggleSplitFolioUI() {
+      const isSplit = document.getElementById('splitFolioCheck').checked;
+      document.getElementById('splitFolioPanel').style.display = isSplit ? 'block' : 'none';
+      document.getElementById('standardPaymentBox').style.display = isSplit ? 'none' : 'block';
+      if (isSplit) {
+        document.querySelectorAll('.gateway-panel').forEach(p => p.classList.remove('active'));
+        calculateSplitAmounts();
+      } else {
+        handlePaymentMethodChange();
+      }
+    }
+
+    function calculateSplitAmounts() {
+      if (!currentSettlement) return;
+      const mode = document.getElementById('splitMode').value;
+      const net = currentSettlement.netPayable;
+      let partA = 0;
+      let partB = 0;
+
+      if (mode === 'fifty_fifty') {
+        partA = net / 2;
+        partB = net / 2;
+      } else {
+        // By Category: Room rent with 12% GST to Folio A, Items with GST to Folio B
+        const roomTotalWithTax = currentSettlement.roomCharges * 1.12 - currentSettlement.guest.advancePaid;
+        const itemsTotalWithTax = currentSettlement.itemsTotal * 1.12;
+        partA = roomTotalWithTax > 0 ? roomTotalWithTax : 0;
+        partB = itemsTotalWithTax > 0 ? itemsTotalWithTax : 0;
+      }
+
+      document.getElementById('splitFolioA').innerText = partA.toFixed(2);
+      document.getElementById('splitFolioB').innerText = partB.toFixed(2);
+    }
+
     function updateBillingCalculations() {
       const itemsTotal = currentSettlement.guest.orderedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
       currentSettlement.itemsTotal = itemsTotal;
@@ -1052,9 +1254,13 @@
 
       updateUpiQr(currentSettlement.netPayable);
       calculateCashChange();
+      if (document.getElementById('splitFolioCheck').checked) {
+        calculateSplitAmounts();
+      }
     }
 
     function handlePaymentMethodChange() {
+      if (document.getElementById('splitFolioCheck').checked) return;
       const method = document.getElementById('paymentMethod').value;
       document.querySelectorAll('.gateway-panel').forEach(p => p.classList.remove('active'));
 
@@ -1086,18 +1292,28 @@
 
     function processSettlement() {
       if (!currentSettlement) return;
-      const method = document.getElementById('paymentMethod').value;
       const folioId = 'FOL-' + Date.now().toString().slice(-6);
+      const isSplit = document.getElementById('splitFolioCheck').checked;
       
-      let paymentDetails = method;
-      if (method === 'Card Gateway') {
-        const last4 = document.getElementById('cardNumber').value.slice(-4) || '8892';
-        paymentDetails = `Card (Ending ${last4})`;
-      } else if (method === 'Digital Wallet') {
-        const provider = document.getElementById('walletProvider').value;
-        paymentDetails = `${provider}`;
-      } else if (method === 'Cash') {
-        paymentDetails = 'Cash Counter';
+      let paymentDetails = '';
+      if (isSplit) {
+        const modeA = document.getElementById('splitFolioAMode').value;
+        const modeB = document.getElementById('splitFolioBMode').value;
+        const partA = document.getElementById('splitFolioA').innerText;
+        const partB = document.getElementById('splitFolioB').innerText;
+        paymentDetails = `Split Folio [A: ₹${partA} via ${modeA} | B: ₹${partB} via ${modeB}]`;
+      } else {
+        const method = document.getElementById('paymentMethod').value;
+        if (method === 'Card Gateway') {
+          const last4 = document.getElementById('cardNumber').value.slice(-4) || '8892';
+          paymentDetails = `Card (Ending ${last4})`;
+        } else if (method === 'Digital Wallet') {
+          paymentDetails = `${document.getElementById('walletProvider').value}`;
+        } else if (method === 'Cash') {
+          paymentDetails = 'Cash Counter';
+        } else {
+          paymentDetails = 'UPI QR';
+        }
       }
 
       const coDateStr = document.getElementById('coActualDate').value || new Date().toISOString().split('T')[0];
@@ -1108,6 +1324,7 @@
         refId: currentSettlement.refId,
         roomNo: currentSettlement.roomNo,
         name: currentSettlement.guest.name,
+        nationality: currentSettlement.guest.nationality || 'Indian',
         adults: currentSettlement.guest.adults,
         children: currentSettlement.guest.children,
         phone: currentSettlement.guest.phone,
@@ -1136,6 +1353,9 @@
       showInvoice(record, currentSettlement);
       document.getElementById('billingSummary').style.display = 'none';
       document.getElementById('checkOutSearchForm').reset();
+      document.getElementById('splitFolioCheck').checked = false;
+      document.getElementById('splitFolioPanel').style.display = 'none';
+      document.getElementById('standardPaymentBox').style.display = 'block';
       populateDropdowns();
       renderDashboard();
     }
@@ -1147,7 +1367,7 @@
       document.getElementById('invRoom').innerText = record.roomNo;
       document.getElementById('invCheckIn').innerText = record.checkIn;
       document.getElementById('invCheckOut').innerText = record.checkOut;
-      document.getElementById('invGuest').innerText = record.name;
+      document.getElementById('invGuest').innerText = `${record.name} (${record.nationality})`;
       document.getElementById('invPhone').innerText = record.phone;
       document.getElementById('invPax').innerText = `${record.adults} Adults, ${record.children} Children`;
 
@@ -1173,19 +1393,13 @@
 
     function closeModal() { document.getElementById('invoiceModal').classList.remove('active'); }
 
-    /* =========================================
-       NIGHT AUDIT & END-OF-DAY (EOD) ENGINE
-       ========================================= */
     function runNightAudit() {
       const todayStr = new Date().toISOString().split('T')[0];
       const totalUnits = rooms.length;
-      
-      // 1. In-house occupied rooms evaluation
       const occupiedRooms = rooms.filter(r => r.status === 'occupied');
       const inHouseCount = occupiedRooms.length;
       const occupancyRate = ((inHouseCount / totalUnits) * 100).toFixed(1);
 
-      // 2. In-house expected room revenue for the day
       let inHouseRoomRev = 0;
       let inHouseFoodRev = 0;
       let inHouseBarRev = 0;
@@ -1203,7 +1417,6 @@
         }
       });
 
-      // 3. Settled folio records for today
       let settledRoomRev = 0;
       let settledFoodRev = 0;
       let settledBarRev = 0;
@@ -1226,7 +1439,6 @@
           });
         }
 
-        // Method collection breakdown
         const m = s.method.toLowerCase();
         if (m.includes('upi')) upiTotal += s.netPaid;
         else if (m.includes('card')) cardTotal += s.netPaid;
@@ -1320,13 +1532,14 @@
             <td><span style="font-weight:600; color:var(--primary);">${row.refId || 'N/A'}</span></td>
             <td>${row.roomNo}</td>
             <td>${row.name}</td>
+            <td>${row.nationality || 'Indian'}</td>
             <td>${row.adults}A, ${row.children}C</td>
             <td>${row.checkIn}</td>
             <td>${row.checkOut}</td>
             <td>₹${row.subtotal.toFixed(2)}</td>
             <td>₹${row.gstTotal.toFixed(2)}</td>
             <td>₹${row.netPaid.toFixed(2)}</td>
-            <td>${row.method}</td>
+            <td><small>${row.method}</small></td>
           </tr>
         `;
       });
@@ -1334,9 +1547,9 @@
 
     function exportLedgerCSV() {
       if(ledger.length === 0) { alert('No ledger data available to export.'); return; }
-      let csv = 'Folio ID,Customer Ref ID,Unit,Guest Name,Headcount,Check-In,Check-Out,Subtotal,GST Total,Net Paid,Payment Gateway\n';
+      let csv = 'Folio ID,Customer Ref ID,Unit,Guest Name,Nationality,Headcount,Check-In,Check-Out,Subtotal,GST Total,Net Paid,Payment Method\n';
       ledger.forEach(r => {
-        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.adults}A ${r.children}C","${r.checkIn}","${r.checkOut}","${r.subtotal}","${r.gstTotal}","${r.netPaid}","${r.method}"\n`;
+        csv += `"${r.folioId}","${r.refId || ''}","${r.roomNo}","${r.name}","${r.nationality || 'Indian'}","${r.adults}A ${r.children}C","${r.checkIn}","${r.checkOut}","${r.subtotal}","${r.gstTotal}","${r.netPaid}","${r.method}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
