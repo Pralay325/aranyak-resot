@@ -37,10 +37,21 @@
     .tab-content.active { display: block; }
     .card { background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.75rem; margin-bottom: 1.5rem; }
     
-    .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 320px; background: #000; }
+    /* Hero Banner */
+    .hero-banner { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 350px; background: #000; }
     .hero-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
     .hero-text { position: absolute; bottom: 2rem; left: 2rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .hero-text h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .hero-text p { font-size: 1.1rem; color: #f1f5f9; }
+
+    /* Gallery Grid */
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.25rem; }
+    .gallery-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.06); transition: transform 0.2s ease; }
+    .gallery-card:hover { transform: translateY(-3px); }
+    .gallery-card img { width: 100%; height: 210px; object-fit: cover; display: block; }
+    .gallery-info { padding: 1.1rem; }
+    .gallery-info h4 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.35rem; }
+    .gallery-info p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
 
     .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
     .menu-category { border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; background: #fff; }
@@ -116,13 +127,65 @@
   </nav>
 
   <div class="container">
-    <!-- Resort Overview -->
+    <!-- Resort Overview with Gallery -->
     <section id="resortView" class="tab-content active">
       <div class="hero-banner">
         <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
         <div class="hero-text">
           <h2>Welcome to Shree Krishna Resort & Retreat</h2>
-          <p>40 Main Building Rooms & 10 Premium Independent Cottages surrounded by pristine nature</p>
+          <p>Serene natural landscapes, luxury cottage accommodations, and lush green lawns in Ayodhya Hills</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Accommodation, Lawns & Guest Amenities</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem;">Experience open landscaped gardens, private cottages, and luxury stays amidst nature.</p>
+        
+        <div class="gallery-grid">
+          <!-- 1. Beautiful Lawn -->
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=700&q=80" alt="Resort Garden Lawn">
+            <div class="gallery-info">
+              <h4>Lush Green Lawns & Garden</h4>
+              <p>Spacious open-air manicured green lawns for evening walks, family relaxation, and campfires under the starry skies.</p>
+            </div>
+          </div>
+
+          <!-- 2. Heritage Cottage -->
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=700&q=80" alt="Heritage Standalone Cottage">
+            <div class="gallery-info">
+              <h4>Heritage Garden Cottage (C-01 to C-10)</h4>
+              <p>Independent luxury cottages situated in open garden areas featuring private wooden patios and panoramic forest views.</p>
+            </div>
+          </div>
+
+          <!-- 3. Deluxe Room -->
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=700&q=80" alt="Deluxe Room">
+            <div class="gallery-info">
+              <h4>Deluxe AC Room</h4>
+              <p>Comfort-crafted interior, climate control AC, premium king bed, and private balcony overlooking lush greenery.</p>
+            </div>
+          </div>
+
+          <!-- 4. Family Suite -->
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=700&q=80" alt="Eco Family Suite">
+            <div class="gallery-info">
+              <h4>Eco Family Suite</h4>
+              <p>Spacious interconnected two-room suites with contemporary living spaces designed for complete family vacations.</p>
+            </div>
+          </div>
+
+          <!-- 5. Dining Hall -->
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=700&q=80" alt="Govinda Dining Hall">
+            <div class="gallery-info">
+              <h4>Govinda Dining Hall</h4>
+              <p>Fine dining multi-cuisine restaurant serving farm-fresh local Purulia delicacies and traditional Bengali thali spreads.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -774,7 +837,7 @@
       ledger.push(record);
       saveLedger();
 
-      // Check-out means the room becomes DIRTY instead of directly available
+      // Check-out marks unit as dirty
       const room = rooms.find(r => r.number === currentSettlement.roomNo);
       room.status = 'dirty';
       room.guest = null;
