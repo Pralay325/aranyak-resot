@@ -1,1 +1,377 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Srikrishna Resort & Retreat - Complete Property Management System</title>
+  <style>
+    :root {
+      --primary: #1b4332;
+      --primary-light: #2d6a4f;
+      --accent: #d8f3dc;
+      --text: #212529;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --border: #dee2e6;
+      --danger: #d90429;
+      --success: #198754;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 15px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { background: var(--primary); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+    header h1 { font-size: 24px; margin-bottom: 5px; }
+    .grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 20px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .card h2 { font-size: 17px; color: var(--primary); margin-bottom: 12px; border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; }
+    button { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%; font-weight: bold; }
+    button:hover { background: var(--primary-light); }
+    .guest-item { border: 1px solid var(--border); padding: 12px; border-radius: 6px; margin-bottom: 12px; background: #fff; border-left: 5px solid var(--primary); }
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-small { padding: 6px 10px; font-size: 12px; width: auto; }
+    .btn-danger { background: var(--danger); }
+    .btn-success { background: var(--success); }
+    .food-history { margin-top: 10px; background: var(--bg); padding: 8px; border-radius: 4px; font-size: 12px; }
+    .food-history table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+    .food-history th, .food-history td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; }
+    .qr-box { text-align: center; padding: 10px; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 6px; margin-top: 10px; }
+    .qr-box img { max-width: 140px; height: auto; margin-top: 5px; }
+    
+    /* Printable Invoice */
+    #invoice { display: none; background: white; padding: 30px; border: 1px solid #000; margin-top: 20px; }
+    @media print {
+      body * { visibility: hidden; }
+      #invoice, #invoice * { visibility: visible; }
+      #invoice { display: block; position: absolute; left: 0; top: 0; width: 100%; border: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Srikrishna Resort & Retreat</h1>
+    <p>Purulia | Complete Front Office, Room Booking & Billing System</p>
+  </header>
+
+  <div class="grid">
+    <!-- Left Column: Operations -->
+    <div>
+      <!-- Check-In Form -->
+      <div class="card">
+        <h2>1. Guest Check-In / Booking</h2>
+        <div class="form-group">
+          <label>Guest Full Name:</label>
+          <input type="text" id="gName" placeholder="Enter guest name">
+        </div>
+        <div class="form-group">
+          <label>Mobile Number:</label>
+          <input type="tel" id="gPhone" placeholder="10-digit mobile number">
+        </div>
+        <div class="form-group">
+          <label>Room Category & No:</label>
+          <input type="text" id="gRoom" placeholder="e.g. Deluxe 102 / Cottage 1">
+        </div>
+        <div class="form-group">
+          <label>Room Tariff Per Day (₹):</label>
+          <input type="number" id="gRent" value="1500">
+        </div>
+        <div class="form-group">
+          <label>Advance Paid (₹):</label>
+          <input type="number" id="gAdvance" value="0">
+        </div>
+        <button onclick="checkInGuest()">Confirm Check-In</button>
+      </div>
+
+      <!-- Add Meal Service -->
+      <div class="card">
+        <h2>2. Add Meal & Room Service</h2>
+        <div class="form-group">
+          <label>Select In-House Guest:</label>
+          <select id="selectGuestMeal"></select>
+        </div>
+        <div class="form-group">
+          <label>Meal / Item Details:</label>
+          <input type="text" id="mealDesc" placeholder="e.g. Lunch Thali, Tea & Snacks, Dinner">
+        </div>
+        <div class="form-group">
+          <label>Quantity:</label>
+          <input type="number" id="mealQty" value="1">
+        </div>
+        <div class="form-group">
+          <label>Total Price (₹):</label>
+          <input type="number" id="mealCost" placeholder="Amount">
+        </div>
+        <button onclick="addMealToGuest()">Add Order to Account</button>
+      </div>
+
+      <!-- UPI QR Code Settings -->
+      <div class="card">
+        <h2>3. Instant UPI Payment QR</h2>
+        <div class="form-group">
+          <label>Resort UPI ID (VPA):</label>
+          <input type="text" id="resortUPI" value="pralayresort@upi" onchange="updateUPI()">
+        </div>
+        <div class="qr-box">
+          <p style="font-size: 12px; color: #444;">Scan to Pay via PhonePe / GPay / Paytm</p>
+          <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=pralayresort@upi&pn=SrikrishnaResort" alt="UPI QR">
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Active Guests Register -->
+    <div>
+      <div class="card">
+        <h2>Active In-House Guests Register</h2>
+        <div id="activeGuestContainer">
+          <p style="color: #666; font-size: 14px;">No active guests currently checked in.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Printable Invoice Section -->
+  <div id="invoice">
+    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+      <h2>Srikrishna Resort & Retreat</h2>
+      <p>Purulia, West Bengal | Contact: +91 XXXXXXXXXX</p>
+      <h3>Guest Folio / Final Tax Invoice</h3>
+    </div>
+    <div style="margin-bottom: 15px; font-size: 13px;" id="invGuestDetails"></div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;" border="1" cellpadding="6" id="invTable">
+      <thead>
+        <tr style="background: #f0f0f0;">
+          <th>SL</th>
+          <th>Item / Service Description</th>
+          <th>Qty</th>
+          <th>Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="invTableBody"></tbody>
+    </table>
+    <div id="invSummary" style="text-align: right; font-size: 14px; margin-bottom: 25px;"></div>
+    <div style="margin-top: 50px; display: flex; justify-content: space-between; font-size: 13px;">
+      <div>Guest Signature</div>
+      <div>Manager / Authorized Signatory</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let guests = JSON.parse(localStorage.getItem('srikrishna_resort_data_v2')) || [];
+
+  function saveData() {
+    localStorage.setItem('srikrishna_resort_data_v2', JSON.stringify(guests));
+    renderGuests();
+  }
+
+  function updateUPI() {
+    const upi = document.getElementById('resortUPI').value.trim();
+    if (upi) {
+      document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=${encodeURIComponent(upi)}&pn=SrikrishnaResort`;
+    }
+  }
+
+  function checkInGuest() {
+    const name = document.getElementById('gName').value.trim();
+    const phone = document.getElementById('gPhone').value.trim();
+    const room = document.getElementById('gRoom').value.trim();
+    const rent = parseFloat(document.getElementById('gRent').value) || 0;
+    const advance = parseFloat(document.getElementById('gAdvance').value) || 0;
+
+    if (!name || !room) {
+      alert("Please enter Guest Name and Room Number.");
+      return;
+    }
+
+    const newGuest = {
+      id: Date.now(),
+      name: name,
+      phone: phone,
+      room: room,
+      rent: rent,
+      advance: advance,
+      checkInDate: new Date().toLocaleDateString('en-GB'),
+      meals: [] // Preserves all meals sequentially
+    };
+
+    guests.push(newGuest);
+    saveData();
+
+    document.getElementById('gName').value = '';
+    document.getElementById('gPhone').value = '';
+    document.getElementById('gRoom').value = '';
+    document.getElementById('gAdvance').value = '0';
+    alert("Guest successfully checked in!");
+  }
+
+  function addMealToGuest() {
+    const guestId = document.getElementById('selectGuestMeal').value;
+    const desc = document.getElementById('mealDesc').value.trim();
+    const qty = parseInt(document.getElementById('mealQty').value) || 1;
+    const cost = parseFloat(document.getElementById('mealCost').value) || 0;
+
+    if (!guestId) {
+      alert("Please select a guest first.");
+      return;
+    }
+    if (!desc || cost <= 0) {
+      alert("Please enter meal description and valid amount.");
+      return;
+    }
+
+    const guest = guests.find(g => g.id == guestId);
+    if (guest) {
+      if (!guest.meals) guest.meals = [];
+
+      guest.meals.push({
+        id: Date.now(),
+        item: desc,
+        quantity: qty,
+        price: cost,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      saveData();
+      document.getElementById('mealDesc').value = '';
+      document.getElementById('mealCost').value = '';
+      alert("Order item successfully added to guest bill!");
+    }
+  }
+
+  function renderGuests() {
+    const container = document.getElementById('activeGuestContainer');
+    const select = document.getElementById('selectGuestMeal');
+
+    container.innerHTML = '';
+    select.innerHTML = '<option value="">-- Choose Guest --</option>';
+
+    if (guests.length === 0) {
+      container.innerHTML = '<p style="color: #666; font-size: 14px;">No active guests currently checked in.</p>';
+      return;
+    }
+
+    guests.forEach(guest => {
+      // Add to select box
+      const opt = document.createElement('option');
+      opt.value = guest.id;
+      opt.textContent = `${guest.name} (${guest.room})`;
+      select.appendChild(opt);
+
+      // Meal items rendering
+      let mealsHTML = '';
+      let totalFood = 0;
+      if (guest.meals && guest.meals.length > 0) {
+        mealsHTML = `
+          <div class="food-history">
+            <strong>All Orders (Preserved):</strong>
+            <table>
+              <tr><th>Time</th><th>Order Description</th><th>Qty</th><th>Amount</th></tr>`;
+        guest.meals.forEach(m => {
+          totalFood += m.price;
+          mealsHTML += `<tr>
+            <td>${m.time}</td>
+            <td>${m.item}</td>
+            <td>${m.quantity}</td>
+            <td>₹${m.price}</td>
+          </tr>`;
+        });
+        mealsHTML += `</table>
+            <div style="text-align:right; margin-top:4px;"><strong>Food Total: ₹${totalFood}</strong></div>
+          </div>`;
+      } else {
+        mealsHTML = '<p style="font-size:12px; color:#888; margin-top:5px;">No food orders recorded yet.</p>';
+      }
+
+      const totalBalance = (guest.rent + totalFood) - guest.advance;
+
+      // Guest Card
+      const card = document.createElement('div');
+      card.className = 'guest-item';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:16px;">${guest.name}</strong>
+          <span style="background:var(--accent); padding:2px 8px; border-radius:4px; font-weight:bold;">${guest.room}</span>
+        </div>
+        <div style="font-size: 13px; color: #555; margin: 5px 0;">
+          Contact: <b>${guest.phone || 'N/A'}</b> | Date: ${guest.checkInDate}<br>
+          Tariff: ₹${guest.rent} | Advance Paid: <span style="color:var(--success);">₹${guest.advance}</span> | Due: <b style="color:var(--danger);">₹${totalBalance}</b>
+        </div>
+        ${mealsHTML}
+        <div class="btn-group">
+          <button class="btn-small" onclick="generateInvoice(${guest.id})">Generate Invoice / Print</button>
+          <button class="btn-small btn-danger" onclick="checkOutGuest(${guest.id})">Check-Out</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function generateInvoice(guestId) {
+    const guest = guests.find(g => g.id == guestId);
+    if (!guest) return;
+
+    document.getElementById('invGuestDetails').innerHTML = `
+      <b>Guest Name:</b> ${guest.name} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Mobile:</b> ${guest.phone || 'N/A'}<br>
+      <b>Room No:</b> ${guest.room} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Date of Arrival:</b> ${guest.checkInDate}
+    `;
+
+    const tbody = document.getElementById('invTableBody');
+    tbody.innerHTML = '';
+    let sl = 1;
+    let subTotal = 0;
+
+    // Room Tariff
+    tbody.innerHTML += `
+      <tr>
+        <td>${sl++}</td>
+        <td>Room Tariff Charges</td>
+        <td>1 Night</td>
+        <td>₹${guest.rent}</td>
+      </tr>
+    `;
+    subTotal += guest.rent;
+
+    // Itemized Meals
+    if (guest.meals && guest.meals.length > 0) {
+      guest.meals.forEach(m => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${sl++}</td>
+            <td>${m.item} (${m.time})</td>
+            <td>${m.quantity}</td>
+            <td>₹${m.price}</td>
+          </tr>
+        `;
+        subTotal += m.price;
+      });
+    }
+
+    const netPayable = subTotal - guest.advance;
+
+    document.getElementById('invSummary').innerHTML = `
+      <p>Subtotal: <b>₹${subTotal}</b></p>
+      <p>Advance Deducted: <b style="color:var(--success);">- ₹${guest.advance}</b></p>
+      <h3 style="margin-top:5px;">Net Balance Payable: ₹${netPayable}</h3>
+    `;
+
+    window.print();
+  }
+
+  function checkOutGuest(guestId) {
+    if (confirm("Check out this guest and finalize folio?")) {
+      guests = guests.filter(g => g.id != guestId);
+      saveData();
+    }
+  }
+
+  window.onload = renderGuests;
+</script>
+
+</body>
+</html>
