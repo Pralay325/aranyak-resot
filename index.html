@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Niharika Resort & Retreat - Ayodhya Hills, Purulia</title>
+  <title>Shree Krishna Resort & Retreat - Ayodhya Hills, Purulia</title>
   <style>
     :root {
       --primary: #1b4332;
@@ -105,7 +105,7 @@
 <body>
   <header>
     <div class="resort-title">
-      <h1>Niharika Resort & Retreat</h1>
+      <h1>Shree Krishna Resort & Retreat</h1>
       <p>Ayodhya Hills, Purulia, West Bengal | Luxury Eco-Stay & Fine Dining</p>
     </div>
     <div id="clock" style="font-size: 0.9rem; font-weight: 500;"></div>
@@ -125,7 +125,7 @@
       <div class="hero-banner">
         <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Resort View">
         <div class="hero-text">
-          <h2>Welcome to Niharika Resort & Retreat</h2>
+          <h2>Welcome to Shree Krishna Resort & Retreat</h2>
           <p>Serene natural landscapes, luxury cottage accommodations, and local culinary delights in Ayodhya Hills</p>
         </div>
       </div>
@@ -150,7 +150,7 @@
           <div class="gallery-card">
             <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80" alt="Restaurant">
             <div class="gallery-info">
-              <h4>Aranyak Dining Hall</h4>
+              <h4>Govinda Dining Hall</h4>
               <p>Authentic local Purulia cuisine, traditional Bengali meals, and multi-cuisine restaurant service.</p>
             </div>
           </div>
@@ -165,7 +165,6 @@
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Freshly cooked local farm-fresh specialties and traditional Bengali delicacies.</p>
         
         <div class="menu-grid">
-          <!-- Breakfast -->
           <div class="menu-category">
             <h4>Breakfast Specials (07:30 AM - 10:30 AM)</h4>
             <div class="menu-item">
@@ -198,7 +197,6 @@
             </div>
           </div>
 
-          <!-- Main Meals -->
           <div class="menu-category">
             <h4>Lunch & Dinner Thali Specials</h4>
             <div class="menu-item">
@@ -231,7 +229,6 @@
             </div>
           </div>
 
-          <!-- Evening Snacks -->
           <div class="menu-category">
             <h4>Evening Snacks & Starters</h4>
             <div class="menu-item">
@@ -472,7 +469,7 @@
     <div class="modal-content">
       <div class="invoice" id="printableInvoice">
         <div class="invoice-header">
-          <h3>NIHARIKA RESORT & RETREAT</h3>
+          <h3>SHREE KRISHNA RESORT & RETREAT</h3>
           <p>Ayodhya Hills, Purulia, West Bengal | Ph: +91 9733054199</p>
           <p>GSTIN: 19ABCDE1234F1Z5</p>
           <h4>TAX INVOICE / GUEST FOLIO</h4>
@@ -505,7 +502,7 @@
           <p>Settlement Mode: <span id="invMethod"></span></p>
         </div>
         <div style="margin-top:2rem; text-align:center; font-size:0.8rem; border-top:1px dashed #000; padding-top:0.5rem;">
-          <p>Thank you for choosing Niharika Resort & Retreat!</p>
+          <p>Thank you for choosing Shree Krishna Resort & Retreat!</p>
         </div>
       </div>
       <div style="margin-top:1.5rem; display:flex; gap:1rem;">
@@ -532,8 +529,8 @@
     }
 
     function initInventory() {
-      const savedRooms = localStorage.getItem('niharika_rooms');
-      const savedLedger = localStorage.getItem('niharika_ledger');
+      const savedRooms = localStorage.getItem('krishna_rooms');
+      const savedLedger = localStorage.getItem('krishna_ledger');
 
       if (savedLedger) ledger = JSON.parse(savedLedger);
 
@@ -550,8 +547,8 @@
       document.getElementById('ciRefId').value = generateRefId();
     }
 
-    function saveRooms() { localStorage.setItem('niharika_rooms', JSON.stringify(rooms)); }
-    function saveLedger() { localStorage.setItem('niharika_ledger', JSON.stringify(ledger)); }
+    function saveRooms() { localStorage.setItem('krishna_rooms', JSON.stringify(rooms)); }
+    function saveLedger() { localStorage.setItem('krishna_ledger', JSON.stringify(ledger)); }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -708,7 +705,7 @@
 
     function updateUpiQr(amount) {
       const vpa = "9733054199@ybl";
-      const name = "Niharika Resort";
+      const name = "Shree Krishna Resort";
       const upiUri = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${amount.toFixed(2)}&cu=INR`;
       document.getElementById('upiQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}`;
     }
@@ -803,7 +800,7 @@
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.setAttribute('href', url);
-      a.setAttribute('download', `Niharika_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+      a.setAttribute('download', `Shree_Krishna_Resort_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
       a.click();
     }
 
